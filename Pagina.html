@@ -1,0 +1,751 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Firenze Studios | Sianinha II</title>
+  <meta name="description" content="Primeiro empreendimento Firenze Studios em Oliveira-MG (Sianinha II). Apenas 42 unidades. Cadastre-se para entrar na lista prioritária." />
+  
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Jost:wght@400;500;600;700;800&family=Marcellus&display=swap');
+
+    /* Variáveis baseadas nas imagens de referência Open Life */
+    :root {
+      --purple-main: #4a0e78;    /* Roxo do Navbar */
+      --purple-dark: #2d084f;    /* Roxo escuro da faixa secundária */
+      --purple-text: #3a0ca3;
+      --yellow-main: #ffb703;    /* Amarelo dos links e ícones */
+      --text-dark: #444444;
+      --text-gray: #777777;
+      --bg-light: #ffffff;
+      --bg-gray: #f9f9f9;
+      --black: #050505;
+      
+      /* Tipografia da Marca */
+      --font-headline: 'Audrey', 'Marcellus', serif;
+      --font-alt: 'Futura PT', 'Jost', sans-serif;
+      --font-main: 'Karu', 'DM Sans', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-main);
+      color: var(--text-dark);
+      background-color: var(--bg-light);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+
+    /* Layout Responsivo Base */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* 1. Navbar Principal (Roxo Claro) */
+    .navbar {
+      background-color: var(--purple-main);
+      color: white;
+      position: relative;
+      z-index: 100;
+    }
+    .navbar .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 90px;
+    }
+    .logo-placeholder {
+      font-family: var(--font-alt);
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--bg-light);
+      text-transform: uppercase;
+      line-height: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .logo-placeholder span {
+      font-family: var(--font-alt);
+      color: var(--bg-light);
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: 1px;
+    }
+    .nav-links {
+      display: flex;
+      gap: 25px;
+    }
+    .nav-links a {
+      font-family: var(--font-alt);
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--yellow-main);
+      transition: opacity 0.3s;
+    }
+    .nav-links a:hover {
+      opacity: 0.8;
+    }
+
+    /* 2. Faixa Secundária (Roxo Escuro) */
+    .top-banner {
+      font-family: var(--font-alt);
+      background-color: var(--purple-dark);
+      color: white;
+      text-align: center;
+      padding: 12px;
+      font-weight: 700;
+      font-size: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* 3. Hero Section (Ficha Técnica + Imagem Grande) */
+    .hero-section {
+      background-color: var(--bg-light);
+      padding: 60px 0;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 50px;
+      align-items: center;
+    }
+    .hero-content h2 {
+      font-family: var(--font-alt);
+      font-size: 32px;
+      font-weight: 400;
+      color: #777;
+      text-transform: uppercase;
+      line-height: 1.1;
+      margin-bottom: 5px;
+    }
+    .hero-content h1 {
+      font-family: var(--font-alt);
+      font-size: 42px;
+      font-weight: 800;
+      color: #555;
+      text-transform: uppercase;
+      line-height: 1.1;
+      margin-bottom: 30px;
+    }
+    .hero-kicker {
+      font-family: var(--font-alt);
+      font-size: 16px;
+      font-weight: 800;
+      color: #333;
+      text-transform: uppercase;
+      margin-bottom: 25px;
+    }
+    .specs-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+    .specs-list li {
+      font-family: var(--font-main);
+      font-size: 15px;
+      color: #333;
+      display: flex;
+      align-items: flex-start;
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+    .specs-list li::before {
+      content: "-";
+      margin-right: 12px;
+      font-weight: bold;
+    }
+    .specs-list strong {
+      color: var(--text-dark);
+      font-weight: 800;
+      margin-right: 6px;
+    }
+    .hero-text-desc {
+      font-family: var(--font-main);
+      font-size: 14px;
+      color: var(--text-gray);
+      margin-top: 20px;
+    }
+    .hero-image {
+      width: 100%;
+      height: 650px;
+      background-color: #eee;
+      overflow: hidden;
+    }
+    .hero-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* 4. Barra Roxa da Equipe */
+    .team-bar {
+      background-color: var(--purple-main);
+      color: white;
+      padding: 40px 0;
+      text-align: center;
+    }
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .team-item h4 {
+      font-family: var(--font-headline);
+      font-size: 20px;
+      font-weight: 400;
+      margin-bottom: 5px;
+    }
+    .team-item p {
+      font-family: var(--font-alt);
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    /* 5. Features (Grid de Ícones Amarelos) */
+    .section-padding { padding: 80px 0; }
+    .features-section { background-color: var(--bg-light); text-align: center; }
+    
+    .section-title {
+      font-family: var(--font-alt);
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--black);
+      text-transform: uppercase;
+    }
+    .title-line {
+      width: 300px;
+      height: 3px;
+      background-color: var(--yellow-main);
+      margin: 15px auto 50px auto;
+    }
+    .title-line-left {
+      width: 60px;
+      height: 6px;
+      background-color: var(--purple-main);
+      margin: 15px 0 40px 0;
+    }
+    
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 60px 40px;
+    }
+    .feature-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .feature-icon {
+      width: 65px;
+      height: 65px;
+      margin-bottom: 20px;
+      color: var(--yellow-main);
+    }
+    .feature-item h3 {
+      font-family: var(--font-alt);
+      font-size: 22px;
+      color: var(--purple-text);
+      margin-bottom: 15px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+    .feature-item p {
+      color: var(--text-gray);
+      font-size: 16px;
+    }
+
+    /* 6. Imagens (Galeria) */
+    .bg-gray { background-color: var(--bg-gray); }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0; /* Sem espaço entre as fotos, como na referência */
+    }
+    .gallery-item {
+      height: 300px;
+      background-color: #ddd;
+      overflow: hidden;
+    }
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+    .gallery-item:hover img {
+      transform: scale(1.05);
+    }
+
+    /* 7. Plantas */
+    .plantas-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 30px;
+    }
+    .planta-item {
+      background: white;
+      padding: 20px;
+      height: 350px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      border: 1px solid #eee;
+      font-weight: bold;
+      color: #aaa;
+    }
+
+    /* 8. Localização */
+    .location-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 50px;
+    }
+    .poi-list { list-style: none; margin-top: 20px; }
+    .poi-list li {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      font-size: 20px;
+      margin-bottom: 20px;
+      color: var(--text-dark);
+      font-family: var(--font-alt);
+    }
+    .poi-list svg { width: 26px; height: 26px; color: var(--purple-main); }
+    .map-placeholder {
+      width: 100%;
+      height: 450px;
+      background-color: #e5e3df;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #666;
+      font-weight: bold;
+      border: 1px solid #ccc;
+    }
+
+    /* 9. Rodapé / Formulário (Fundo Preto) */
+    .contact-footer {
+      background-color: var(--black);
+      color: white;
+      padding: 80px 0;
+    }
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+    .form-container {
+      background-color: white;
+      padding: 40px;
+      border-radius: 5px;
+    }
+    .form-group { margin-bottom: 20px; }
+    .form-group input, .form-group textarea {
+      width: 100%;
+      padding: 16px;
+      border: 1px solid #eee;
+      background-color: #fafafa;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 15px;
+      outline: none;
+    }
+    .form-group input:focus, .form-group textarea:focus { border-color: var(--purple-main); }
+    .btn-submit {
+      font-family: var(--font-alt);
+      width: 100%;
+      background-color: var(--black);
+      color: white;
+      padding: 20px;
+      border: none;
+      font-size: 16px;
+      font-weight: 800;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background 0.3s;
+    }
+    .btn-submit:hover { background-color: #333; }
+    
+    .contact-text h2 {
+      font-family: var(--font-alt);
+      font-size: 52px;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 25px;
+      text-transform: uppercase;
+    }
+    .contact-text h3 {
+      font-family: var(--font-alt);
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+    }
+    .contact-text p {
+      font-size: 16px;
+      color: #ccc;
+      margin-bottom: 35px;
+    }
+    .btn-purple {
+      font-family: var(--font-alt);
+      display: inline-block;
+      background-color: #4a0e78;
+      color: white;
+      padding: 18px 35px;
+      border: 1px solid #560bad;
+      font-weight: 700;
+      text-transform: uppercase;
+      border-radius: 4px;
+      font-size: 16px;
+      letter-spacing: 0.5px;
+      transition: background 0.3s;
+    }
+    .btn-purple:hover {
+      background-color: var(--purple-dark);
+    }
+
+    /* Widget WhatsApp Flutuante */
+    .whatsapp-widget {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 65px;
+      height: 65px;
+      background-color: var(--yellow-main);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      z-index: 1000;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+    .whatsapp-widget:hover { transform: scale(1.1); }
+    .whatsapp-widget svg { width: 32px; height: 32px; fill: white; }
+
+    /* Responsividade Móbile */
+    @media(max-width: 900px) {
+      .hero-grid, .team-grid, .features-grid, .location-grid, .contact-grid {
+        grid-template-columns: 1fr;
+      }
+      .gallery-grid, .plantas-grid { grid-template-columns: 1fr 1fr; }
+      .nav-links { display: none; }
+      .hero-content h1 { font-size: 36px; }
+      .contact-text h2 { font-size: 36px; }
+      .hero-image { height: 400px; }
+    }
+    @media(max-width: 600px) {
+      .gallery-grid, .plantas-grid { grid-template-columns: 1fr; }
+      .hero-content h2 { font-size: 24px; }
+      .hero-content h1 { font-size: 30px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container">
+      <div class="logo-placeholder">
+        FIRENZE STUDIOS
+        <span>SIANINHA II</span>
+      </div>
+      <div class="nav-links">
+        <a href="#home">Home</a>
+        <a href="#projeto">Ficha Técnica</a>
+        <a href="#imagens">Imagens</a>
+        <a href="#plantas">Plantas</a>
+        <a href="#localizacao">Localização</a>
+        <a href="#contato">Valores</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Topo Secundário -->
+  <div class="top-banner">
+    NEGOCIE DIRETO COM A MULTIPLACE (WHATSAPP)
+  </div>
+
+  <!-- Hero Section (Combinação do Home + Projeto) -->
+  <section id="home" class="hero-section">
+    <div class="container hero-grid">
+      <div class="hero-content">
+        <h2>BREVE LANÇAMENTO</h2>
+        <h1>FIRENZE STUDIOS</h1>
+        
+        <p class="hero-kicker">O PROJETO IDEAL PARA O SEU MOMENTO...</p>
+        
+        <ul class="specs-list">
+          <li><strong>42</strong> Unidades com acesso digital</li>
+          <li><strong>11</strong> Andares</li>
+          <li><strong>3</strong> Pavimentos garagem</li>
+          <li><strong>2</strong> Elevadores</li>
+          <li>Portaria Inteligente</li>
+          <li>Carregador de carro elétrico</li>
+          <li>Máquinas lava e seca comunitárias</li>
+          <li>Área gourmet com piscina</li>
+          <li>Coworking</li>
+          <li>Preparado para Airbnb, Booking e outros</li>
+          <li>Opção de vista para mata ou para cidade</li>
+        </ul>
+        
+        <p class="hero-text-desc">
+          Chega de plantas antigas e manutenção cara. Conheça o projeto ideal para morar com praticidade ou investir na região do Sianinha II.
+        </p>
+      </div>
+      
+      <div class="hero-image">
+        <!-- Inserida a imagem principal do prédio fornecida -->
+        <img src="02 com logo.jpg" alt="Fachada Firenze Studios" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Barra Roxa (Equipe/Destaques) -->
+  <section class="team-bar">
+    <div class="container team-grid">
+      <div class="team-item">
+        <h4>Arquitetura</h4>
+        <p>Projeto Moderno</p>
+      </div>
+      <div class="team-item">
+        <h4>Plantas</h4>
+        <p>Otimização de Espaços</p>
+      </div>
+      <div class="team-item">
+        <h4>Localização</h4>
+        <p>Bairro Sianinha II</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features (Ícones Amarelos) -->
+  <section class="section-padding features-section">
+    <div class="container">
+      <h2 class="section-title">RENTABILIZE SEU FIRENZE STUDIOS<br>DE FORMA DESCOMPLICADA</h2>
+      <div class="title-line"></div>
+      
+      <div class="features-grid">
+        <div class="feature-item">
+          <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+          <h3>Localização Estratégica</h3>
+          <p>Próximo às principais vias de acesso, eixos econômicos e pontos importantes da cidade.</p>
+        </div>
+        <div class="feature-item">
+          <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+          <h3>Decoração Fácil</h3>
+          <p>Imóveis compactos são infinitamente mais fáceis de manter, mobiliar e decorar.</p>
+        </div>
+        <div class="feature-item">
+          <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          <h3>Lazer & Conveniência</h3>
+          <p>Áreas comuns completas, com espaços compartilhados para atender às necessidades dos moradores.</p>
+        </div>
+        <div class="feature-item">
+          <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+          <h3>Locação</h3>
+          <p>Alta demanda para locações de curta e longa temporada (Airbnb, Booking e outros).</p>
+        </div>
+        <div class="feature-item">
+          <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path></svg>
+          <h3>Plantas</h3>
+          <p>Plantas inteligentes com melhor aproveitamento de espaço em cada metro quadrado.</p>
+        </div>
+        <div class="feature-item">
+          <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+          <h3>Renda Extra</h3>
+          <p>Projetos pensados para rentabilizar seu investimento, gerando renda extra sem dor de cabeça.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Imagens / Galeria -->
+  <section id="imagens" class="section-padding bg-gray">
+    <div class="container" style="max-width: 1400px;">
+      <h2 class="section-title" style="font-size: 36px; font-weight: 400; text-transform: none;">Imagens</h2>
+      <div class="title-line-left"></div>
+      
+      <!-- Grid de Imagens sem bordas usando as fotos fornecidas -->
+      <div class="gallery-grid">
+        <div class="gallery-item"><img src="01 com logo.jpg" alt="Fachada com Logo"></div>
+        <div class="gallery-item"><img src="03 com logo.jpg" alt="Perspectiva com Logo"></div>
+        <div class="gallery-item"><img src="04 com logo.jpg" alt="Perspectiva com Logo 2"></div>
+        <div class="gallery-item"><img src="01 (1).jpg" alt="Perspectiva 1"></div>
+        <div class="gallery-item"><img src="01 (2).jpg" alt="Perspectiva 2"></div>
+        <div class="gallery-item"><img src="01 (3).png" alt="Perspectiva 3"></div>
+        <div class="gallery-item"><img src="01 (4).png" alt="Perspectiva 4"></div>
+        <div class="gallery-item"><img src="01 (5).jpg" alt="Perspectiva 5"></div>
+        <div class="gallery-item"><img src="01 (7).jpg" alt="Perspectiva 7"></div>
+        <div class="gallery-item"><img src="01 (8).jpg" alt="Perspectiva 8"></div>
+        <div class="gallery-item"><img src="01 (9).jpg" alt="Aérea Piscina"></div>
+        <div class="gallery-item"><img src="01 (10).jpg" alt="Perspectiva 10"></div>
+        <div class="gallery-item"><img src="01 (11).jpg" alt="Perspectiva 11"></div>
+        <div class="gallery-item"><img src="01 (12).jpg" alt="Térreo"></div>
+        <div class="gallery-item"><img src="01 (13).jpg" alt="Aérea Fundo"></div>
+        <div class="gallery-item"><img src="01(14).jpg" alt="Aérea Entardecer"></div>
+        <div class="gallery-item"><img src="01 (1).png" alt="Perspectiva 1 PNG"></div>
+        <div class="gallery-item"><img src="01 (5).png" alt="Perspectiva 5 PNG"></div>
+        <div class="gallery-item"><img src="011.png" alt="Perspectiva 11 PNG"></div>
+        <div class="gallery-item"><img src="Sem título.png" alt="Perspectiva Extra"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Plantas -->
+  <section id="plantas" class="section-padding">
+    <div class="container">
+      <h2 class="section-title" style="font-size: 36px; font-weight: 400; text-transform: none;">Plantas</h2>
+      <div class="title-line-left"></div>
+      
+      <div class="plantas-grid">
+        <div class="planta-item"><img src="PAV. TIPO 10X.jpg" alt="Pavimento Tipo" style="width:100%;height:100%;object-fit:contain;"></div>
+        <div class="planta-item"><img src="LAZER 2°PAV.jpg" alt="Lazer 2° Pavimento" style="width:100%;height:100%;object-fit:contain;"></div>
+        <div class="planta-item"><img src="GARAGEM TÉRREO.jpg" alt="Garagem Térreo" style="width:100%;height:100%;object-fit:contain;"></div>
+        <div class="planta-item"><img src="GARAGEM G1.jpg" alt="Garagem G1" style="width:100%;height:100%;object-fit:contain;"></div>
+        <div class="planta-item"><img src="GARAGEM G2.jpg" alt="Garagem G2" style="width:100%;height:100%;object-fit:contain;"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Localização -->
+  <section id="localizacao" class="section-padding bg-gray">
+    <div class="container">
+      <h2 class="section-title" style="font-size: 36px; font-weight: 400; text-transform: none;">Localização - Bairro Sianinha II</h2>
+      <div class="title-line-left"></div>
+
+      <div class="location-grid">
+        <div>
+          <ul class="poi-list">
+            <li>
+              <!-- Ícone de Pin -->
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              </svg>
+              1 km do Hospital São Judas Tadeu
+            </li>
+            <li>
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              </svg>
+              5 min do Centro da Cidade
+            </li>
+            <li>
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              </svg>
+              1 min do Parque João Reis | Parque do Capão
+            </li>
+            <li>
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              </svg>
+              15 min do acesso a Fernão Dias
+            </li>
+          </ul>
+        </div>
+        <div class="map-placeholder" style="padding:0; overflow:hidden;">
+          <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d1500!2d-44.823556!3d-20.709765!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!1s0x0%3A0x0!5e0!3m2!1spt-BR!2sbr&q=-20.709765,-44.823556" 
+            width="100%" 
+            height="100%" 
+            style="border:0; display:block;" 
+            allowfullscreen="" 
+            loading="lazy" 
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Rodapé / Formulário (Fundo Preto) -->
+  <section id="contato" class="contact-footer">
+    <div class="container contact-grid">
+      <div class="form-container">
+        <form id="contactForm">
+          <div class="form-group">
+            <input type="text" id="field-nome" placeholder="Nome *" required>
+          </div>
+          <div class="form-group">
+            <input type="tel" id="field-tel" placeholder="Whatsapp *" required>
+          </div>
+          <div class="form-group">
+            <input type="email" id="field-email" placeholder="E-mail *" required>
+          </div>
+          <div class="form-group">
+            <textarea rows="4" id="field-comments" placeholder="Comentários"></textarea>
+          </div>
+          <button type="submit" class="btn-submit">Enviar</button>
+          <p id="form-success" style="display:none; color:#4a0e78; text-align:center; margin-top:15px; font-weight:700;">✓ Dados enviados com sucesso! Entraremos em contato em breve.</p>
+          <p id="form-error" style="display:none; color:#cc0000; text-align:center; margin-top:15px; font-weight:700;">Erro ao enviar. Tente novamente.</p>
+        </form>
+      </div>
+
+      <script>
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          var nome = document.getElementById('field-nome').value;
+          var tel = document.getElementById('field-tel').value;
+          var email = document.getElementById('field-email').value;
+          
+          var url = 'https://docs.google.com/forms/d/e/1FAIpQLSe4oAmrTwFwbGKCw5Rq9uaiiB1n0H4BccsvmNs4SrGCiXrMiw/formResponse';
+          
+          var formData = new FormData();
+          formData.append('entry.1898717275', nome);
+          formData.append('entry.1539004747', tel);
+          formData.append('entry.893822167', email);
+          
+          fetch(url, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: formData
+          }).then(function() {
+            document.getElementById('form-success').style.display = 'block';
+            document.getElementById('form-error').style.display = 'none';
+            document.getElementById('contactForm').reset();
+          }).catch(function() {
+            document.getElementById('form-error').style.display = 'block';
+          });
+        });
+      </script>
+
+      <div class="contact-text">
+        <h2>SAIBA TUDO SEM<br>COMPROMISSO</h2>
+        <h3>RECEBA INFORMAÇÕES SOBRE O PROJETO E SEUS VALORES.<br>(NEGOCIE DIRETO COM A MULTIPLACE)</h3>
+        <p>
+          Escreva nos comentários qual o melhor horário para entrarmos em contato. Temos um conceito de não ficar importunando nenhum cliente, por isso para melhor atendê-lo solicitamos essa informação.
+        </p>
+        <a href="#" class="btn-purple">QUERO RECEBER OS VALORES</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Widget Flutuante -->
+  <a href="https://wa.me/5511941177700" target="_blank" class="whatsapp-widget" title="Fale conosco no WhatsApp">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824z"></path>
+    </svg>
+  </a>
+
+</body>
+</html>
