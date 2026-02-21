@@ -370,6 +370,123 @@
     .status-badge.vendido { background: #F44336; color: white; }
     .status-badge.reservado { background: #FFC107; color: #333; }
 
+    /* Pricing Panel */
+    .pricing-section {
+      margin-top: 25px;
+      border-top: 3px solid var(--purple-main);
+      padding-top: 25px;
+    }
+    .pricing-section h4 {
+      font-family: var(--font-alt);
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--purple-main);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    .tier-badge {
+      display: inline-block;
+      background: var(--purple-main);
+      color: white;
+      padding: 6px 18px;
+      border-radius: 20px;
+      font-family: var(--font-alt);
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+    .pricing-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .pricing-card {
+      background: #f9f9f9;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 15px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .pricing-card-header {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e0e0e0;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+    .pricing-card-title {
+      font-family: var(--font-alt);
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--purple-main);
+    }
+    .pricing-card-price {
+      font-family: var(--font-alt);
+      font-size: 18px;
+      font-weight: 800;
+      color: #4CAF50;
+    }
+    .pricing-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .pricing-field label {
+      font-family: var(--font-alt);
+      font-size: 11px;
+      font-weight: 700;
+      color: #888;
+      text-transform: uppercase;
+    }
+    .pricing-field input {
+      padding: 10px;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      font-family: var(--font-alt);
+      font-size: 15px;
+      font-weight: 700;
+      color: #333;
+      outline: none;
+      transition: border-color 0.3s;
+      background: white;
+    }
+    .pricing-field input:focus {
+      border-color: var(--purple-main);
+    }
+    .pricing-totals {
+      margin-top: 18px;
+      background: linear-gradient(135deg, var(--purple-main), var(--purple-dark));
+      color: white;
+      border-radius: 10px;
+      padding: 20px;
+    }
+    .pricing-total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-alt);
+      padding: 4px 0;
+      font-size: 14px;
+    }
+    .pricing-total-row.main {
+      font-size: 20px;
+      font-weight: 800;
+      border-top: 1px solid rgba(255,255,255,0.3);
+      padding-top: 12px;
+      margin-top: 8px;
+    }
+    .pricing-total-row span:last-child {
+      font-weight: 800;
+    }
+    @media(max-width: 900px) {
+      .pricing-card { grid-template-columns: 1fr; }
+    }
+
     /* Responsive */
     @media(max-width: 900px) {
       .main-content { grid-template-columns: 1fr; }
@@ -438,6 +555,14 @@
       <div class="summary-row">
         <span class="summary-label">Área total:</span>
         <span class="summary-value" id="totalArea">0 m²</span>
+      </div>
+
+      <!-- Painel de Preços -->
+      <div class="pricing-section" id="pricingSection" style="display:none;">
+        <h4>💰 Valores e Condições de Pagamento</h4>
+        <div id="tierBadge" class="tier-badge"></div>
+        <div class="pricing-cards" id="pricingCards"></div>
+        <div class="pricing-totals" id="pricingTotals"></div>
       </div>
 
       <div class="reservation-form" id="reservationForm">
@@ -514,50 +639,79 @@
 
     let selectedUnits = [];
 
-    // Renderizar o prédio visual
+    // ======== TABELA DE PREÇOS ========
+    // Preços variam por faixa de andar e metragem
+    // Andares 1-3 (baixos), 4-7 (médios), 8-11 (altos)
+    function getUnitPricing(unit, totalSelected) {
+      const f = unit.floor;
+      const isLarge = unit.area > 33; // 35.73m²
+      let t;
+      if (!isLarge && f <= 3) {
+        // 30.94m² · Andares 1-3
+        t = { p1: 174800, e1: 6800, p24: 169556, e24: 1556, p5: 166060 };
+      } else if (isLarge && f <= 3) {
+        // 35.73m² · Andares 1-3
+        t = { p1: 184000, e1: 16000, p24: 178480, e24: 10480, p5: 174800 };
+      } else if (!isLarge && f <= 7) {
+        // 30.94m² · Andares 4-7
+        t = { p1: 184000, e1: 16000, p24: 178480, e24: 10480, p5: 174800 };
+      } else if (isLarge && f <= 7) {
+        // 35.73m² · Andares 4-7
+        t = { p1: 193200, e1: 25200, p24: 187404, e24: 19404, p5: 183540 };
+      } else if (!isLarge) {
+        // 30.94m² · Andares 8-11
+        t = { p1: 193200, e1: 25200, p24: 187404, e24: 19404, p5: 183540 };
+      } else {
+        // 35.73m² · Andares 8-11
+        t = { p1: 193200, e1: 25200, p24: 187404, e24: 19404, p5: 183540 };
+      }
+      if (totalSelected === 1) {
+        return { preco: t.p1, entrada: t.e1, numParcelas: 48, valorParcela: 3500 };
+      } else if (totalSelected <= 4) {
+        return { preco: t.p24, entrada: t.e24, numParcelas: 48, valorParcela: 3500 };
+      } else {
+        const vp = Math.round((t.p5 / 48) * 100) / 100;
+        return { preco: t.p5, entrada: 0, numParcelas: 48, valorParcela: vp };
+      }
+    }
+
+    function formatBRL(v) {
+      return v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+    function parseBRL(s) {
+      if (!s) return 0;
+      return parseFloat(String(s).replace(/\./g, '').replace(',', '.')) || 0;
+    }
+
+    // ======== RENDERIZAÇÃO DO PRÉDIO ========
     function renderBuilding() {
       const grid = document.getElementById('buildingGrid');
       grid.innerHTML = '';
-
-      // Agrupar por andar
       const floors = {};
       units.forEach(u => {
         if (!floors[u.floor]) floors[u.floor] = [];
         floors[u.floor].push(u);
       });
-
-      // Renderizar de cima para baixo (andar 11 -> 1)
       const floorNumbers = Object.keys(floors).map(Number).sort((a,b) => b - a);
-
       floorNumbers.forEach(floorNum => {
         const floorDiv = document.createElement('div');
         floorDiv.className = 'floor';
-
         const label = document.createElement('div');
         label.className = 'floor-label';
         label.textContent = floorNum + 'º Andar';
         floorDiv.appendChild(label);
-
         const unitsDiv = document.createElement('div');
         unitsDiv.className = 'floor-units';
-
         floors[floorNum].forEach(unit => {
           const box = document.createElement('div');
           box.className = 'unit-box ' + unit.status;
           box.id = 'unit-' + unit.id;
-          box.innerHTML = `
-            <div class="unit-number">Ap. ${unit.id}</div>
-            <div class="unit-area">${unit.area} m²</div>
-          `;
-
+          box.innerHTML = `<div class="unit-number">Ap. ${unit.id}</div><div class="unit-area">${unit.area} m²</div>`;
           if (unit.status === 'disponivel') {
             box.onclick = () => toggleUnit(unit);
           }
-
           unitsDiv.appendChild(box);
         });
-
-        // Se andar 1 tem só 2 unidades, adicionar espaços vazios
         if (floorNum === 1) {
           for (let i = floors[floorNum].length; i < 4; i++) {
             const empty = document.createElement('div');
@@ -565,38 +719,29 @@
             unitsDiv.appendChild(empty);
           }
         }
-
         floorDiv.appendChild(unitsDiv);
         grid.appendChild(floorDiv);
       });
     }
 
-    // Renderizar tabela
+    // ======== TABELA LATERAL ========
     function renderTable() {
       const tbody = document.getElementById('tableBody');
       tbody.innerHTML = '';
-
       units.forEach(unit => {
         const tr = document.createElement('tr');
         tr.className = unit.status;
-
         const statusLabel = unit.status === 'disponivel' ? 'Disponível' :
                            unit.status === 'vendido' ? 'Vendido' : 'Reservado';
-
-        tr.innerHTML = `
-          <td>Ap. ${unit.id}</td>
-          <td>${unit.area} m²</td>
-          <td><span class="status-badge ${unit.status}">${statusLabel}</span></td>
-        `;
+        tr.innerHTML = `<td>Ap. ${unit.id}</td><td>${unit.area} m²</td><td><span class="status-badge ${unit.status}">${statusLabel}</span></td>`;
         tbody.appendChild(tr);
       });
     }
 
-    // Toggle seleção de unidade
+    // ======== SELEÇÃO DE UNIDADES ========
     function toggleUnit(unit) {
       const idx = selectedUnits.findIndex(u => u.id === unit.id);
       const box = document.getElementById('unit-' + unit.id);
-
       if (idx >= 0) {
         selectedUnits.splice(idx, 1);
         box.className = 'unit-box disponivel';
@@ -604,11 +749,9 @@
         selectedUnits.push(unit);
         box.className = 'unit-box selecionado';
       }
-
       updateSelection();
     }
 
-    // Remover unidade da seleção
     function removeUnit(unitId) {
       const idx = selectedUnits.findIndex(u => u.id === unitId);
       if (idx >= 0) {
@@ -619,19 +762,21 @@
       }
     }
 
-    // Atualizar painel de seleção
+    // ======== ATUALIZAÇÃO DO PAINEL ========
     function updateSelection() {
       const container = document.getElementById('selectedUnits');
-      const totalUnits = document.getElementById('totalUnits');
-      const totalArea = document.getElementById('totalArea');
+      const totalUnitsEl = document.getElementById('totalUnits');
+      const totalAreaEl = document.getElementById('totalArea');
       const form = document.getElementById('reservationForm');
+      const pricingSection = document.getElementById('pricingSection');
 
       if (selectedUnits.length === 0) {
         container.innerHTML = '';
         container.className = 'selected-units empty';
-        totalUnits.textContent = '0';
-        totalArea.textContent = '0 m²';
+        totalUnitsEl.textContent = '0';
+        totalAreaEl.textContent = '0 m²';
         form.className = 'reservation-form';
+        pricingSection.style.display = 'none';
       } else {
         container.className = 'selected-units';
         container.innerHTML = selectedUnits.map(u =>
@@ -640,32 +785,134 @@
             <span class="remove" onclick="removeUnit('${u.id}')">✕</span>
           </div>`
         ).join('');
-
-        totalUnits.textContent = selectedUnits.length;
+        totalUnitsEl.textContent = selectedUnits.length;
         const area = selectedUnits.reduce((sum, u) => sum + u.area, 0);
-        totalArea.textContent = area.toFixed(2) + ' m²';
+        totalAreaEl.textContent = area.toFixed(2) + ' m²';
         form.className = 'reservation-form show';
+        pricingSection.style.display = 'block';
+        renderPricing();
       }
     }
 
-    // Enviar reserva via WhatsApp
+    // ======== PAINEL DE PREÇOS ========
+    function renderPricing() {
+      const total = selectedUnits.length;
+      const tierBadge = document.getElementById('tierBadge');
+      const cardsContainer = document.getElementById('pricingCards');
+
+      if (total === 1) {
+        tierBadge.textContent = '📦 Compra de 1 Unidade';
+      } else if (total <= 4) {
+        tierBadge.textContent = '📦 Compra de 2 a 4 Unidades — Desconto por volume!';
+      } else {
+        tierBadge.textContent = '📦 Compra de 5+ Unidades — Melhor preço!';
+      }
+
+      cardsContainer.innerHTML = '';
+      selectedUnits.forEach((unit, idx) => {
+        const p = getUnitPricing(unit, total);
+        const card = document.createElement('div');
+        card.className = 'pricing-card';
+        card.innerHTML = `
+          <div class="pricing-card-header">
+            <span class="pricing-card-title">Ap. ${unit.id} · ${unit.area} m² · ${unit.floor}º Andar</span>
+            <span class="pricing-card-price">R$ ${formatBRL(p.preco)}</span>
+          </div>
+          <div class="pricing-field">
+            <label>Entrada (R$)</label>
+            <input type="text" class="input-entrada" data-idx="${idx}" value="${formatBRL(p.entrada)}" onchange="recalcTotals()" oninput="recalcTotals()">
+          </div>
+          <div class="pricing-field">
+            <label>Parcelas</label>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <input type="number" class="input-num-parcelas" data-idx="${idx}" value="${p.numParcelas}" min="1" max="120" style="width:70px;" onchange="recalcTotals()" oninput="recalcTotals()">
+              <span style="font-family:var(--font-alt); font-weight:800; color:#888;">×</span>
+              <input type="text" class="input-val-parcela" data-idx="${idx}" value="${formatBRL(p.valorParcela)}" onchange="recalcTotals()" oninput="recalcTotals()">
+            </div>
+          </div>
+        `;
+        cardsContainer.appendChild(card);
+      });
+      recalcTotals();
+    }
+
+    function recalcTotals() {
+      const totalsContainer = document.getElementById('pricingTotals');
+      let totalPreco = 0, totalEntrada = 0, totalParcelaValor = 0;
+      let numParcelas = 48;
+
+      selectedUnits.forEach((unit, idx) => {
+        const p = getUnitPricing(unit, selectedUnits.length);
+        totalPreco += p.preco;
+        const eInput = document.querySelector(`.input-entrada[data-idx="${idx}"]`);
+        const npInput = document.querySelector(`.input-num-parcelas[data-idx="${idx}"]`);
+        const vpInput = document.querySelector(`.input-val-parcela[data-idx="${idx}"]`);
+        if (eInput) totalEntrada += parseBRL(eInput.value);
+        if (npInput) numParcelas = parseInt(npInput.value) || 48;
+        if (vpInput) totalParcelaValor += parseBRL(vpInput.value);
+      });
+
+      const totalGeral = totalEntrada + (numParcelas * totalParcelaValor);
+      totalsContainer.innerHTML = `
+        <div class="pricing-total-row">
+          <span>Valor total (tabela):</span>
+          <span>R$ ${formatBRL(totalPreco)}</span>
+        </div>
+        <div class="pricing-total-row">
+          <span>Entrada total:</span>
+          <span>R$ ${formatBRL(totalEntrada)}</span>
+        </div>
+        <div class="pricing-total-row">
+          <span>Parcelamento:</span>
+          <span>${numParcelas}x R$ ${formatBRL(totalParcelaValor)}</span>
+        </div>
+        <div class="pricing-total-row main">
+          <span>💰 Total Geral:</span>
+          <span>R$ ${formatBRL(totalGeral)}</span>
+        </div>
+      `;
+    }
+
+    // ======== ENVIO VIA WHATSAPP ========
     function enviarReserva() {
       const nome = document.getElementById('nomeCompleto').value.trim();
       const telefone = document.getElementById('telefone').value.trim();
-
       if (!nome) { alert('Por favor, preencha seu nome completo.'); return; }
       if (!telefone) { alert('Por favor, preencha seu telefone.'); return; }
       if (selectedUnits.length === 0) { alert('Selecione pelo menos uma unidade.'); return; }
 
-      const unidadesTexto = selectedUnits.map(u => `Ap. ${u.id} (${u.area} m²)`).join(', ');
-      const areaTotal = selectedUnits.reduce((sum, u) => sum + u.area, 0).toFixed(2);
+      let totalPreco = 0, totalEntrada = 0, totalParcelaValor = 0, numParcelas = 48;
+      const detalhes = selectedUnits.map((unit, idx) => {
+        const p = getUnitPricing(unit, selectedUnits.length);
+        totalPreco += p.preco;
+        const eInput = document.querySelector(`.input-entrada[data-idx="${idx}"]`);
+        const npInput = document.querySelector(`.input-num-parcelas[data-idx="${idx}"]`);
+        const vpInput = document.querySelector(`.input-val-parcela[data-idx="${idx}"]`);
+        const entrada = eInput ? parseBRL(eInput.value) : p.entrada;
+        numParcelas = npInput ? parseInt(npInput.value) || 48 : 48;
+        const valorParcela = vpInput ? parseBRL(vpInput.value) : p.valorParcela;
+        totalEntrada += entrada;
+        totalParcelaValor += valorParcela;
+        return `  • Ap. ${unit.id} (${unit.area}m² - ${unit.floor}ºAndar)\n    Valor: R$ ${formatBRL(p.preco)} | Entrada: R$ ${formatBRL(entrada)} | ${numParcelas}x R$ ${formatBRL(valorParcela)}`;
+      }).join('\n');
+
+      const faixa = selectedUnits.length === 1 ? '1 unidade' :
+                    selectedUnits.length <= 4 ? '2 a 4 unidades' : '5+ unidades';
+      const areaTotal = selectedUnits.reduce((s, u) => s + u.area, 0).toFixed(2);
+      const totalGeral = totalEntrada + (numParcelas * totalParcelaValor);
 
       const mensagem = `🏢 *RESERVA FIRENZE STUDIOS*\n\n` +
         `👤 *Nome:* ${nome}\n` +
         `📱 *Telefone:* ${telefone}\n\n` +
-        `🏠 *Unidades selecionadas:* ${unidadesTexto}\n` +
-        `📐 *Área total:* ${areaTotal} m²\n` +
-        `📊 *Qtd. unidades:* ${selectedUnits.length}\n\n` +
+        `📦 *Faixa de preço:* ${faixa}\n` +
+        `📊 *Qtd. unidades:* ${selectedUnits.length}\n` +
+        `📐 *Área total:* ${areaTotal} m²\n\n` +
+        `🏠 *Detalhes por unidade:*\n${detalhes}\n\n` +
+        `💰 *Resumo financeiro:*\n` +
+        `  Valor total: R$ ${formatBRL(totalPreco)}\n` +
+        `  Entrada total: R$ ${formatBRL(totalEntrada)}\n` +
+        `  Parcelas: ${numParcelas}x R$ ${formatBRL(totalParcelaValor)}\n` +
+        `  Total geral: R$ ${formatBRL(totalGeral)}\n\n` +
         `Gostaria de confirmar a reserva dessas unidades.`;
 
       const url = 'https://wa.me/5511941177700?text=' + encodeURIComponent(mensagem);
