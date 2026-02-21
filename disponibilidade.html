@@ -487,6 +487,98 @@
       .pricing-card { grid-template-columns: 1fr; }
     }
 
+    /* Waitlist / Lista de Espera */
+    .waitlist-overlay {
+      display: none;
+      max-width: 1400px;
+      margin: 0 auto 40px auto;
+      padding: 0 20px;
+    }
+    .waitlist-overlay.show { display: block; }
+    .waitlist-box {
+      background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+      border-radius: 14px;
+      padding: 40px;
+      text-align: center;
+      color: white;
+      box-shadow: 0 8px 30px rgba(238,90,36,0.3);
+    }
+    .waitlist-box h3 {
+      font-family: var(--font-alt);
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    .waitlist-box p {
+      font-size: 16px;
+      margin-bottom: 25px;
+      opacity: 0.9;
+    }
+    .waitlist-form {
+      display: flex;
+      gap: 12px;
+      max-width: 700px;
+      margin: 0 auto;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .waitlist-form input {
+      flex: 1;
+      min-width: 200px;
+      padding: 16px 20px;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-family: var(--font-main);
+      outline: none;
+    }
+    .waitlist-form button {
+      padding: 16px 35px;
+      background: white;
+      color: #ee5a24;
+      border: none;
+      border-radius: 10px;
+      font-family: var(--font-alt);
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.3s;
+      white-space: nowrap;
+    }
+    .waitlist-form button:hover {
+      background: #fff3e0;
+      transform: translateY(-2px);
+    }
+    .waitlist-success {
+      display: none;
+      margin-top: 20px;
+      padding: 15px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 10px;
+      font-weight: 700;
+      font-family: var(--font-alt);
+    }
+
+    /* Loading */
+    .page-loading {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(255,255,255,0.9);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 9999; flex-direction: column; gap: 15px;
+    }
+    .page-loading.hide { display: none; }
+    .spinner {
+      width: 40px; height: 40px;
+      border: 4px solid #eee; border-top-color: var(--purple-main);
+      border-radius: 50%; animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .page-loading span {
+      font-family: var(--font-alt); font-size: 14px; color: #999;
+    }
+
     /* Responsive */
     @media(max-width: 900px) {
       .main-content { grid-template-columns: 1fr; }
@@ -495,10 +587,18 @@
       .floor-label { width: 55px; font-size: 11px; }
       .unit-box .unit-number { font-size: 11px; }
       .unit-box .unit-area { font-size: 9px; }
+      .waitlist-box { padding: 25px; }
+      .waitlist-box h3 { font-size: 20px; }
     }
   </style>
 </head>
 <body>
+  <!-- Loading -->
+  <div class="page-loading" id="pageLoading">
+    <div class="spinner"></div>
+    <span>Carregando disponibilidade...</span>
+  </div>
+
   <!-- Navbar -->
   <nav class="navbar">
     <div class="container">
@@ -539,6 +639,22 @@
     <div class="building-visual">
       <h3>🏢 Selecione suas Unidades</h3>
       <div id="buildingGrid"></div>
+    </div>
+  </div>
+
+  <!-- Lista de Espera (aparece quando 100% reservado/vendido) -->
+  <div class="waitlist-overlay" id="waitlistOverlay">
+    <div class="waitlist-box">
+      <h3>🔔 Todas as unidades estão reservadas!</h3>
+      <p>Cadastre-se na lista de espera. Se uma unidade ficar disponível, você será o primeiro a saber!</p>
+      <div class="waitlist-form" id="waitlistForm">
+        <input type="text" id="waitlistNome" placeholder="Seu nome completo" />
+        <input type="tel" id="waitlistTel" placeholder="Telefone com DDD" />
+        <button onclick="enviarListaEspera()">📲 ENTRAR NA LISTA</button>
+      </div>
+      <div class="waitlist-success" id="waitlistSuccess">
+        ✅ Cadastro realizado! Você receberá uma mensagem quando houver disponibilidade.
+      </div>
     </div>
   </div>
 
@@ -588,7 +704,7 @@
       // Andar 2
       { id: '201', floor: 2, area: 30.94, status: 'reservado' },
       { id: '202', floor: 2, area: 30.94, status: 'reservado' },
-      { id: '203', floor: 2, area: 30.94, status: 'disponivel' },
+      { id: '203', floor: 2, area: 35.73, status: 'disponivel' },
       { id: '204', floor: 2, area: 30.94, status: 'reservado' },
       // Andar 3
       { id: '301', floor: 3, area: 30.94, status: 'vendido' },
@@ -919,9 +1035,71 @@
       window.open(url, '_blank');
     }
 
-    // Inicializar
-    renderBuilding();
-    renderTable();
+    // ======== LISTA DE ESPERA ========
+    function checkWaitlist() {
+      const available = units.filter(u => u.status === 'disponivel').length;
+      const overlay = document.getElementById('waitlistOverlay');
+      if (available === 0) {
+        overlay.className = 'waitlist-overlay show';
+      } else {
+        overlay.className = 'waitlist-overlay';
+      }
+    }
+
+    async function enviarListaEspera() {
+      const nome = document.getElementById('waitlistNome').value.trim();
+      const telefone = document.getElementById('waitlistTel').value.trim();
+      if (!nome) { alert('Por favor, preencha seu nome.'); return; }
+      if (!telefone) { alert('Por favor, preencha seu telefone.'); return; }
+
+      // Salvar na API
+      try {
+        await fetch('/api/waitlist', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nome, telefone })
+        });
+      } catch (e) { console.warn('Erro ao salvar na lista:', e); }
+
+      // Enviar imediatamente no WhatsApp do vendedor
+      const msg = `🔔 *LISTA DE ESPERA - FIRENZE STUDIOS*\n\n` +
+        `👤 *Nome:* ${nome}\n` +
+        `📱 *Telefone:* ${telefone}\n\n` +
+        `Este cliente quer ser avisado quando uma unidade ficar disponível.`;
+      window.open('https://wa.me/5511941177700?text=' + encodeURIComponent(msg), '_blank');
+
+      // Mostrar sucesso
+      document.getElementById('waitlistForm').style.display = 'none';
+      document.getElementById('waitlistSuccess').style.display = 'block';
+    }
+
+    // ======== INICIALIZAÇÃO COM API ========
+    async function init() {
+      // Buscar status atualizados da API
+      try {
+        const resp = await fetch('/api/units');
+        if (resp.ok) {
+          const overrides = await resp.json();
+          if (overrides && Object.keys(overrides).length > 0) {
+            units.forEach(u => {
+              if (overrides[u.id]) u.status = overrides[u.id];
+            });
+          }
+        }
+      } catch (e) {
+        console.warn('API não disponível, usando dados locais.');
+      }
+
+      // Renderizar
+      renderBuilding();
+      renderTable();
+      checkWaitlist();
+
+      // Esconder loading
+      document.getElementById('pageLoading').classList.add('hide');
+    }
+
+    init();
   </script>
 </body>
 </html>

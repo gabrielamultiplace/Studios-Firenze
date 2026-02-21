@@ -1,0 +1,7 @@
+name = "studios-firenze"
+compatibility_date = "2024-09-23"
+pages_build_output_dir = "."
+
+[[kv_namespaces]]
+binding = "UNITS_KV"
+id = "7b385fdf6e2544f3aaa35f5ebc571439"

@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin | Firenze Studios</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Jost:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --purple-main: #4a0e78;
+      --purple-dark: #2d084f;
+      --yellow-main: #ffb703;
+      --font-alt: 'Jost', sans-serif;
+      --font-main: 'DM Sans', sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-main); background: #f0f0f5; min-height: 100vh; }
+
+    /* ===== LOGIN ===== */
+    .login-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(135deg, var(--purple-main), var(--purple-dark));
+      display: flex; align-items: center; justify-content: center;
+      z-index: 9999;
+    }
+    .login-box {
+      background: white; border-radius: 16px; padding: 45px;
+      width: 420px; max-width: 92%; box-shadow: 0 25px 80px rgba(0,0,0,0.4);
+    }
+    .login-box h1 {
+      font-family: var(--font-alt); font-size: 26px; font-weight: 800;
+      color: var(--purple-main); margin-bottom: 6px; text-transform: uppercase;
+    }
+    .login-box p { color: #999; font-size: 14px; margin-bottom: 30px; }
+    .login-box input {
+      width: 100%; padding: 15px 18px; border: 2px solid #eee; border-radius: 10px;
+      font-size: 15px; margin-bottom: 14px; outline: none; font-family: var(--font-main);
+      transition: border-color 0.3s;
+    }
+    .login-box input:focus { border-color: var(--purple-main); }
+    .login-box button {
+      width: 100%; padding: 17px; background: var(--purple-main); color: white;
+      border: none; border-radius: 10px; font-size: 16px; font-weight: 800;
+      font-family: var(--font-alt); cursor: pointer; text-transform: uppercase;
+      transition: background 0.3s; margin-top: 5px;
+    }
+    .login-box button:hover { background: var(--purple-dark); }
+    .login-error {
+      color: #F44336; font-size: 13px; display: none; margin-top: 12px;
+      font-weight: 600; text-align: center;
+    }
+
+    /* ===== ADMIN PANEL ===== */
+    .admin-panel { display: none; }
+    .admin-nav {
+      background: var(--purple-main); color: white; padding: 0 20px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.2);
+    }
+    .admin-nav .container {
+      max-width: 1400px; margin: 0 auto;
+      display: flex; justify-content: space-between; align-items: center; height: 64px;
+    }
+    .admin-nav h2 {
+      font-family: var(--font-alt); font-size: 18px; font-weight: 800;
+    }
+    .admin-nav-links {
+      display: flex; align-items: center; gap: 15px;
+    }
+    .admin-nav .btn-site {
+      background: rgba(255,255,255,0.12); color: var(--yellow-main); border: none; padding: 8px 18px;
+      border-radius: 6px; font-family: var(--font-alt); font-weight: 700;
+      cursor: pointer; font-size: 13px; text-decoration: none; text-transform: uppercase;
+    }
+    .admin-nav .btn-logout {
+      background: rgba(255,255,255,0.12); color: #ff7675; border: none; padding: 8px 18px;
+      border-radius: 6px; font-family: var(--font-alt); font-weight: 700;
+      cursor: pointer; font-size: 13px; text-transform: uppercase;
+    }
+    .admin-nav .btn-site:hover, .admin-nav .btn-logout:hover { background: rgba(255,255,255,0.22); }
+
+    .admin-content { max-width: 1400px; margin: 25px auto; padding: 0 20px; }
+
+    /* ===== STATS ===== */
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 25px;
+    }
+    .stat-card {
+      background: white; border-radius: 12px; padding: 22px; text-align: center;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.04); border-left: 4px solid #ddd;
+    }
+    .stat-card.disponivel { border-left-color: #4CAF50; }
+    .stat-card.reservado { border-left-color: #FF9800; }
+    .stat-card.vendido { border-left-color: #F44336; }
+    .stat-card.total { border-left-color: var(--purple-main); }
+    .stat-number {
+      font-family: var(--font-alt); font-size: 40px; font-weight: 800; line-height: 1;
+    }
+    .stat-card.disponivel .stat-number { color: #4CAF50; }
+    .stat-card.reservado .stat-number { color: #FF9800; }
+    .stat-card.vendido .stat-number { color: #F44336; }
+    .stat-card.total .stat-number { color: var(--purple-main); }
+    .stat-label {
+      font-family: var(--font-alt); font-size: 12px; font-weight: 700;
+      text-transform: uppercase; color: #999; margin-top: 6px;
+    }
+
+    /* ===== TABS ===== */
+    .admin-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+    .admin-tab {
+      padding: 12px 28px; background: white; border: 2px solid #e0e0e0;
+      border-radius: 8px; font-family: var(--font-alt); font-weight: 700;
+      font-size: 14px; cursor: pointer; transition: all 0.3s; text-transform: uppercase;
+    }
+    .admin-tab.active { background: var(--purple-main); color: white; border-color: var(--purple-main); }
+    .admin-tab:hover:not(.active) { border-color: var(--purple-main); color: var(--purple-main); }
+
+    /* ===== CARD ===== */
+    .admin-card {
+      background: white; border-radius: 12px; padding: 28px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.04); margin-bottom: 20px;
+    }
+    .admin-card h3 {
+      font-family: var(--font-alt); font-size: 18px; font-weight: 800;
+      color: var(--purple-main); margin-bottom: 18px; text-transform: uppercase;
+    }
+
+    /* ===== UNITS GRID ===== */
+    .units-admin-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px;
+    }
+    .unit-admin-card {
+      border: 2px solid #eee; border-radius: 8px; padding: 14px 16px;
+      display: flex; justify-content: space-between; align-items: center;
+      transition: all 0.3s;
+    }
+    .unit-admin-card.vendido { border-color: #FFCDD2; background: #FFF5F5; }
+    .unit-admin-card.reservado { border-color: #FFE0B2; background: #FFFBF0; }
+    .unit-admin-card.disponivel { border-color: #C8E6C9; background: #F5FFF5; }
+    .unit-admin-info h4 { font-family: var(--font-alt); font-size: 15px; font-weight: 800; color: #333; }
+    .unit-admin-info span { font-size: 12px; color: #999; }
+    .unit-admin-card select {
+      padding: 8px 14px; border: 2px solid #ddd; border-radius: 6px;
+      font-family: var(--font-alt); font-size: 13px; font-weight: 700;
+      cursor: pointer; outline: none; background: white; transition: border-color 0.3s;
+    }
+    .unit-admin-card select:focus { border-color: var(--purple-main); }
+
+    /* ===== BUTTONS ===== */
+    .btn-save {
+      display: block; width: 100%; max-width: 450px; margin: 28px auto 0;
+      padding: 18px; background: #4CAF50; color: white; border: none;
+      border-radius: 10px; font-size: 18px; font-weight: 800;
+      font-family: var(--font-alt); cursor: pointer; text-transform: uppercase;
+      transition: all 0.3s; letter-spacing: 0.5px;
+    }
+    .btn-save:hover { background: #388E3C; transform: translateY(-1px); box-shadow: 0 4px 15px rgba(76,175,80,0.3); }
+    .btn-save:disabled { background: #ccc; cursor: not-allowed; transform: none; box-shadow: none; }
+    .save-status {
+      text-align: center; margin-top: 15px; font-family: var(--font-alt);
+      font-weight: 700; font-size: 14px;
+    }
+
+    /* ===== WAITLIST TABLE ===== */
+    .waitlist-table { width: 100%; border-collapse: collapse; }
+    .waitlist-table th {
+      background: var(--purple-main); color: white; padding: 14px 16px;
+      font-family: var(--font-alt); font-size: 13px; text-transform: uppercase; text-align: left;
+    }
+    .waitlist-table td {
+      padding: 14px 16px; border-bottom: 1px solid #f0f0f0; font-size: 14px;
+    }
+    .waitlist-table tr:hover td { background: #fafafa; }
+    .waitlist-empty {
+      text-align: center; padding: 50px; color: #bbb;
+      font-family: var(--font-alt); font-size: 16px;
+    }
+    .btn-clear-waitlist {
+      display: inline-block; margin-top: 20px; padding: 12px 30px;
+      background: #F44336; color: white; border: none; border-radius: 8px;
+      font-family: var(--font-alt); font-weight: 700; font-size: 14px;
+      cursor: pointer; text-transform: uppercase; transition: background 0.3s;
+    }
+    .btn-clear-waitlist:hover { background: #D32F2F; }
+
+    /* ===== LOADING ===== */
+    .loading {
+      text-align: center; padding: 40px; color: #999;
+      font-family: var(--font-alt); font-size: 16px;
+    }
+    .loading::after {
+      content: ''; display: inline-block; width: 20px; height: 20px;
+      border: 3px solid #ddd; border-top-color: var(--purple-main);
+      border-radius: 50%; animation: spin 0.8s linear infinite;
+      margin-left: 10px; vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ===== RESPONSIVE ===== */
+    @media(max-width: 768px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .units-admin-grid { grid-template-columns: 1fr; }
+      .admin-tabs { flex-wrap: wrap; }
+    }
+    @media(max-width: 480px) {
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .admin-nav-links { gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- ===== LOGIN ===== -->
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-box">
+      <h1>🔐 Painel Admin</h1>
+      <p>Firenze Studios — Gestão de Unidades</p>
+      <input type="email" id="loginEmail" placeholder="E-mail" autocomplete="email" />
+      <input type="password" id="loginPassword" placeholder="Senha" autocomplete="current-password" />
+      <button onclick="doLogin()">ENTRAR</button>
+      <p class="login-error" id="loginError">E-mail ou senha incorretos.</p>
+    </div>
+  </div>
+
+  <!-- ===== ADMIN PANEL ===== -->
+  <div class="admin-panel" id="adminPanel">
+    <nav class="admin-nav">
+      <div class="container">
+        <h2>🏢 Admin — Firenze Studios</h2>
+        <div class="admin-nav-links">
+          <a href="disponibilidade.html" target="_blank" class="btn-site">📊 Ver Site</a>
+          <button class="btn-logout" onclick="doLogout()">Sair</button>
+        </div>
+      </div>
+    </nav>
+
+    <div class="admin-content">
+      <!-- Stats -->
+      <div class="stats-grid" id="statsGrid"></div>
+
+      <!-- Tabs -->
+      <div class="admin-tabs">
+        <div class="admin-tab active" data-tab="units" onclick="switchTab('units', this)">📦 Unidades</div>
+        <div class="admin-tab" data-tab="waitlist" onclick="switchTab('waitlist', this)">📋 Lista de Espera</div>
+      </div>
+
+      <!-- TAB: Unidades -->
+      <div id="tabUnits">
+        <div class="admin-card">
+          <h3>Gerenciar Status das Unidades</h3>
+          <div id="unitsGridContainer">
+            <div class="loading">Carregando unidades</div>
+          </div>
+          <button class="btn-save" id="btnSave" onclick="saveChanges()">💾 SALVAR ALTERAÇÕES</button>
+          <p class="save-status" id="saveStatus"></p>
+        </div>
+      </div>
+
+      <!-- TAB: Lista de Espera -->
+      <div id="tabWaitlist" style="display:none;">
+        <div class="admin-card">
+          <h3>📋 Lista de Espera — Interessados</h3>
+          <div id="waitlistContent">
+            <div class="loading">Carregando lista</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ========== DADOS BASE ==========
+    const BASE_UNITS = [
+      { id: '101', floor: 1, area: 30.94, status: 'disponivel' },
+      { id: '102', floor: 1, area: 30.94, status: 'disponivel' },
+      { id: '201', floor: 2, area: 30.94, status: 'reservado' },
+      { id: '202', floor: 2, area: 30.94, status: 'reservado' },
+      { id: '203', floor: 2, area: 35.73, status: 'disponivel' },
+      { id: '204', floor: 2, area: 30.94, status: 'reservado' },
+      { id: '301', floor: 3, area: 30.94, status: 'vendido' },
+      { id: '302', floor: 3, area: 30.94, status: 'vendido' },
+      { id: '303', floor: 3, area: 35.73, status: 'disponivel' },
+      { id: '304', floor: 3, area: 30.94, status: 'vendido' },
+      { id: '401', floor: 4, area: 30.94, status: 'disponivel' },
+      { id: '402', floor: 4, area: 30.94, status: 'vendido' },
+      { id: '403', floor: 4, area: 35.73, status: 'disponivel' },
+      { id: '404', floor: 4, area: 30.94, status: 'vendido' },
+      { id: '501', floor: 5, area: 30.94, status: 'disponivel' },
+      { id: '502', floor: 5, area: 30.94, status: 'disponivel' },
+      { id: '503', floor: 5, area: 35.73, status: 'disponivel' },
+      { id: '504', floor: 5, area: 30.94, status: 'disponivel' },
+      { id: '601', floor: 6, area: 30.94, status: 'vendido' },
+      { id: '602', floor: 6, area: 30.94, status: 'vendido' },
+      { id: '603', floor: 6, area: 35.73, status: 'vendido' },
+      { id: '604', floor: 6, area: 30.94, status: 'vendido' },
+      { id: '701', floor: 7, area: 30.94, status: 'vendido' },
+      { id: '702', floor: 7, area: 30.94, status: 'vendido' },
+      { id: '703', floor: 7, area: 35.73, status: 'vendido' },
+      { id: '704', floor: 7, area: 30.94, status: 'vendido' },
+      { id: '801', floor: 8, area: 30.94, status: 'vendido' },
+      { id: '802', floor: 8, area: 30.94, status: 'disponivel' },
+      { id: '803', floor: 8, area: 35.73, status: 'vendido' },
+      { id: '804', floor: 8, area: 30.94, status: 'reservado' },
+      { id: '901', floor: 9, area: 30.94, status: 'disponivel' },
+      { id: '902', floor: 9, area: 30.94, status: 'disponivel' },
+      { id: '903', floor: 9, area: 35.73, status: 'vendido' },
+      { id: '904', floor: 9, area: 30.94, status: 'disponivel' },
+      { id: '1001', floor: 10, area: 30.94, status: 'disponivel' },
+      { id: '1002', floor: 10, area: 30.94, status: 'disponivel' },
+      { id: '1003', floor: 10, area: 35.73, status: 'vendido' },
+      { id: '1004', floor: 10, area: 30.94, status: 'reservado' },
+      { id: '1101', floor: 11, area: 30.94, status: 'disponivel' },
+      { id: '1102', floor: 11, area: 30.94, status: 'disponivel' },
+      { id: '1103', floor: 11, area: 35.73, status: 'vendido' },
+      { id: '1104', floor: 11, area: 30.94, status: 'disponivel' },
+    ];
+
+    let adminToken = '';
+    let currentUnits = [];
+
+    // ========== LOGIN ==========
+    function doLogin() {
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      if (email === 'redemultiplace424@gmail.com' && password === '123456') {
+        adminToken = 'Basic ' + btoa(email + ':' + password);
+        sessionStorage.setItem('adminToken', adminToken);
+        document.getElementById('loginOverlay').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'block';
+        loadData();
+      } else {
+        document.getElementById('loginError').style.display = 'block';
+      }
+    }
+
+    function doLogout() {
+      sessionStorage.removeItem('adminToken');
+      location.reload();
+    }
+
+    // Auto-login se já autenticado
+    (function checkSession() {
+      const token = sessionStorage.getItem('adminToken');
+      if (token) {
+        adminToken = token;
+        document.getElementById('loginOverlay').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'block';
+        loadData();
+      }
+      // Enter pra login
+      document.getElementById('loginPassword').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') doLogin();
+      });
+    })();
+
+    // ========== CARREGAR DADOS ==========
+    async function loadData() {
+      await loadUnits();
+      loadWaitlist();
+    }
+
+    async function loadUnits() {
+      currentUnits = BASE_UNITS.map(u => ({...u}));
+      try {
+        const resp = await fetch('/api/units');
+        if (resp.ok) {
+          const overrides = await resp.json();
+          if (overrides && Object.keys(overrides).length > 0) {
+            currentUnits.forEach(u => {
+              if (overrides[u.id]) u.status = overrides[u.id];
+            });
+          }
+        }
+      } catch (e) {
+        console.warn('API não disponível, usando dados base.');
+      }
+      renderUnitsGrid();
+      renderStats();
+    }
+
+    // ========== RENDER UNIDADES ==========
+    function renderUnitsGrid() {
+      const container = document.getElementById('unitsGridContainer');
+      const grid = document.createElement('div');
+      grid.className = 'units-admin-grid';
+
+      currentUnits.forEach(unit => {
+        const card = document.createElement('div');
+        card.className = 'unit-admin-card ' + unit.status;
+        card.id = 'admin-unit-' + unit.id;
+        card.innerHTML = `
+          <div class="unit-admin-info">
+            <h4>Ap. ${unit.id}</h4>
+            <span>${unit.area} m² · ${unit.floor}º Andar</span>
+          </div>
+          <select onchange="updateUnitStatus('${unit.id}', this.value)">
+            <option value="disponivel" ${unit.status === 'disponivel' ? 'selected' : ''}>✅ Disponível</option>
+            <option value="reservado" ${unit.status === 'reservado' ? 'selected' : ''}>⏳ Reservado</option>
+            <option value="vendido" ${unit.status === 'vendido' ? 'selected' : ''}>❌ Vendido</option>
+          </select>
+        `;
+        grid.appendChild(card);
+      });
+
+      container.innerHTML = '';
+      container.appendChild(grid);
+    }
+
+    function updateUnitStatus(unitId, newStatus) {
+      const unit = currentUnits.find(u => u.id === unitId);
+      if (unit) {
+        unit.status = newStatus;
+        const card = document.getElementById('admin-unit-' + unitId);
+        if (card) {
+          card.className = 'unit-admin-card ' + newStatus;
+        }
+        renderStats();
+      }
+    }
+
+    // ========== RENDER STATS ==========
+    function renderStats() {
+      const disp = currentUnits.filter(u => u.status === 'disponivel').length;
+      const res = currentUnits.filter(u => u.status === 'reservado').length;
+      const vend = currentUnits.filter(u => u.status === 'vendido').length;
+      const total = currentUnits.length;
+
+      document.getElementById('statsGrid').innerHTML = `
+        <div class="stat-card disponivel">
+          <div class="stat-number">${disp}</div>
+          <div class="stat-label">Disponíveis</div>
+        </div>
+        <div class="stat-card reservado">
+          <div class="stat-number">${res}</div>
+          <div class="stat-label">Reservados</div>
+        </div>
+        <div class="stat-card vendido">
+          <div class="stat-number">${vend}</div>
+          <div class="stat-label">Vendidos</div>
+        </div>
+        <div class="stat-card total">
+          <div class="stat-number">${total}</div>
+          <div class="stat-label">Total</div>
+        </div>
+      `;
+    }
+
+    // ========== SALVAR ==========
+    async function saveChanges() {
+      const btn = document.getElementById('btnSave');
+      const status = document.getElementById('saveStatus');
+      btn.disabled = true;
+      btn.textContent = '⏳ SALVANDO...';
+      status.textContent = '';
+
+      const overrides = {};
+      currentUnits.forEach(u => { overrides[u.id] = u.status; });
+
+      try {
+        const resp = await fetch('/api/units', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': adminToken
+          },
+          body: JSON.stringify(overrides)
+        });
+
+        if (resp.ok) {
+          btn.textContent = '✅ SALVO COM SUCESSO!';
+          btn.style.background = '#388E3C';
+          status.style.color = '#4CAF50';
+          status.textContent = 'Alterações publicadas! Todos os visitantes já verão as mudanças.';
+        } else {
+          throw new Error('Erro ' + resp.status);
+        }
+      } catch (e) {
+        btn.style.background = '#F44336';
+        btn.textContent = '❌ ERRO AO SALVAR';
+        status.style.color = '#F44336';
+        status.textContent = 'Erro ao salvar: ' + e.message + '. Verifique se o KV está configurado.';
+      }
+
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.textContent = '💾 SALVAR ALTERAÇÕES';
+        btn.style.background = '';
+      }, 3000);
+    }
+
+    // ========== TABS ==========
+    function switchTab(tab, el) {
+      document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+      document.getElementById('tabUnits').style.display = tab === 'units' ? 'block' : 'none';
+      document.getElementById('tabWaitlist').style.display = tab === 'waitlist' ? 'block' : 'none';
+      if (tab === 'waitlist') loadWaitlist();
+    }
+
+    // ========== LISTA DE ESPERA ==========
+    async function loadWaitlist() {
+      const container = document.getElementById('waitlistContent');
+      try {
+        const resp = await fetch('/api/waitlist', {
+          headers: { 'Authorization': adminToken }
+        });
+        if (!resp.ok) throw new Error('Erro ' + resp.status);
+        const data = await resp.json();
+
+        if (!data || data.length === 0) {
+          container.innerHTML = '<div class="waitlist-empty">📭 Nenhum interessado na lista de espera ainda.</div>';
+          return;
+        }
+
+        let html = `
+          <table class="waitlist-table">
+            <thead>
+              <tr><th>#</th><th>Nome</th><th>Telefone</th><th>Data</th><th>Ação</th></tr>
+            </thead>
+            <tbody>
+        `;
+        data.forEach((item, idx) => {
+          const date = new Date(item.data);
+          const dateStr = date.toLocaleDateString('pt-BR') + ' ' + date.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
+          const whatsappMsg = encodeURIComponent(`Olá ${item.nome}! Temos uma novidade sobre o Firenze Studios. Uma unidade ficou disponível! Gostaria de mais informações?`);
+          const whatsappNum = item.telefone.replace(/\D/g, '');
+          html += `
+            <tr>
+              <td>${idx + 1}</td>
+              <td><strong>${item.nome}</strong></td>
+              <td>${item.telefone}</td>
+              <td>${dateStr}</td>
+              <td><a href="https://wa.me/55${whatsappNum}?text=${whatsappMsg}" target="_blank" style="color:#4CAF50; font-weight:700; text-decoration:none;">📱 WhatsApp</a></td>
+            </tr>
+          `;
+        });
+        html += '</tbody></table>';
+        html += `<div style="text-align:center; margin-top:20px;">
+          <button class="btn-clear-waitlist" onclick="clearWaitlist()">🗑️ Limpar Lista</button>
+          <span style="display:block; margin-top:8px; font-size:12px; color:#999;">Total: ${data.length} interessado(s)</span>
+        </div>`;
+        container.innerHTML = html;
+      } catch (e) {
+        container.innerHTML = '<div class="waitlist-empty">⚠️ Erro ao carregar lista: ' + e.message + '</div>';
+      }
+    }
+
+    async function clearWaitlist() {
+      if (!confirm('Tem certeza que deseja limpar toda a lista de espera?')) return;
+      try {
+        await fetch('/api/waitlist', {
+          method: 'DELETE',
+          headers: { 'Authorization': adminToken }
+        });
+        loadWaitlist();
+      } catch (e) {
+        alert('Erro ao limpar: ' + e.message);
+      }
+    }
+  </script>
+</body>
+</html>
