@@ -927,6 +927,7 @@
       cardsContainer.innerHTML = '';
       selectedUnits.forEach((unit, idx) => {
         const p = getUnitPricing(unit, total);
+        const valorParcelaCalc = p.numParcelas > 0 ? Math.round(((p.preco - p.entrada) / p.numParcelas) * 100) / 100 : 0;
         const card = document.createElement('div');
         card.className = 'pricing-card';
         card.innerHTML = `
@@ -936,14 +937,14 @@
           </div>
           <div class="pricing-field">
             <label>Entrada (R$)</label>
-            <input type="text" class="input-entrada" data-idx="${idx}" value="${formatBRL(p.entrada)}" onchange="recalcTotals()" oninput="recalcTotals()">
+            <input type="text" class="input-entrada" data-idx="${idx}" data-preco="${p.preco}" value="${formatBRL(p.entrada)}" onchange="recalcTotals()" oninput="recalcTotals()">
           </div>
           <div class="pricing-field">
             <label>Parcelas</label>
             <div style="display:flex; gap:8px; align-items:center;">
               <input type="number" class="input-num-parcelas" data-idx="${idx}" value="${p.numParcelas}" min="1" max="120" style="width:70px;" onchange="recalcTotals()" oninput="recalcTotals()">
               <span style="font-family:var(--font-alt); font-weight:800; color:#888;">×</span>
-              <input type="text" class="input-val-parcela" data-idx="${idx}" value="${formatBRL(p.valorParcela)}" onchange="recalcTotals()" oninput="recalcTotals()">
+              <span class="val-parcela-display" data-idx="${idx}" style="font-family:var(--font-alt); font-weight:800; font-size:15px; color:#4CAF50;">R$ ${formatBRL(valorParcelaCalc)}</span>
             </div>
           </div>
         `;
@@ -958,14 +959,22 @@
       let numParcelas = 48;
 
       selectedUnits.forEach((unit, idx) => {
-        const p = getUnitPricing(unit, selectedUnits.length);
-        totalPreco += p.preco;
         const eInput = document.querySelector(`.input-entrada[data-idx="${idx}"]`);
         const npInput = document.querySelector(`.input-num-parcelas[data-idx="${idx}"]`);
-        const vpInput = document.querySelector(`.input-val-parcela[data-idx="${idx}"]`);
-        if (eInput) totalEntrada += parseBRL(eInput.value);
-        if (npInput) numParcelas = parseInt(npInput.value) || 48;
-        if (vpInput) totalParcelaValor += parseBRL(vpInput.value);
+        const parcelaDisplay = document.querySelector(`.val-parcela-display[data-idx="${idx}"]`);
+
+        const preco = eInput ? parseFloat(eInput.dataset.preco) : 0;
+        const entrada = eInput ? parseBRL(eInput.value) : 0;
+        const np = npInput ? (parseInt(npInput.value) || 48) : 48;
+        const valorParcela = np > 0 ? Math.round(((preco - entrada) / np) * 100) / 100 : 0;
+
+        // Atualizar display da parcela
+        if (parcelaDisplay) parcelaDisplay.textContent = 'R$ ' + formatBRL(valorParcela);
+
+        totalPreco += preco;
+        totalEntrada += entrada;
+        totalParcelaValor += valorParcela;
+        numParcelas = np;
       });
 
       const totalGeral = totalEntrada + (numParcelas * totalParcelaValor);
@@ -999,17 +1008,16 @@
 
       let totalPreco = 0, totalEntrada = 0, totalParcelaValor = 0, numParcelas = 48;
       const detalhes = selectedUnits.map((unit, idx) => {
-        const p = getUnitPricing(unit, selectedUnits.length);
-        totalPreco += p.preco;
         const eInput = document.querySelector(`.input-entrada[data-idx="${idx}"]`);
         const npInput = document.querySelector(`.input-num-parcelas[data-idx="${idx}"]`);
-        const vpInput = document.querySelector(`.input-val-parcela[data-idx="${idx}"]`);
-        const entrada = eInput ? parseBRL(eInput.value) : p.entrada;
+        const preco = eInput ? parseFloat(eInput.dataset.preco) : getUnitPricing(unit, selectedUnits.length).preco;
+        const entrada = eInput ? parseBRL(eInput.value) : getUnitPricing(unit, selectedUnits.length).entrada;
         numParcelas = npInput ? parseInt(npInput.value) || 48 : 48;
-        const valorParcela = vpInput ? parseBRL(vpInput.value) : p.valorParcela;
+        const valorParcela = numParcelas > 0 ? Math.round(((preco - entrada) / numParcelas) * 100) / 100 : 0;
+        totalPreco += preco;
         totalEntrada += entrada;
         totalParcelaValor += valorParcela;
-        return `  • Ap. ${unit.id} (${unit.area}m² - ${unit.floor}ºAndar)\n    Valor: R$ ${formatBRL(p.preco)} | Entrada: R$ ${formatBRL(entrada)} | ${numParcelas}x R$ ${formatBRL(valorParcela)}`;
+        return `  • Ap. ${unit.id} (${unit.area}m² - ${unit.floor}ºAndar)\n    Valor: R$ ${formatBRL(preco)} | Entrada: R$ ${formatBRL(entrada)} | ${numParcelas}x R$ ${formatBRL(valorParcela)}`;
       }).join('\n');
 
       const faixa = selectedUnits.length === 1 ? '1 unidade' :
