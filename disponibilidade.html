@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Disponibilidade | Firenze Studios</title>
+  <meta name="description" content="Verifique a disponibilidade das unidades do Firenze Studios - Sinhaninha II, Oliveira-MG." />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Jost:wght@400;500;600;700;800&family=Marcellus&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --purple-main: #4a0e78;
+      --purple-dark: #2d084f;
+      --yellow-main: #ffb703;
+      --black: #050505;
+      --font-alt: 'Futura PT', 'Jost', sans-serif;
+      --font-main: 'Karu', 'DM Sans', sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font-main); color: #333; background: #f5f5f5; }
+    a { text-decoration: none; color: inherit; }
+
+    /* Navbar */
+    .navbar {
+      background: var(--purple-main);
+      color: white;
+      padding: 0 20px;
+    }
+    .navbar .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 70px;
+    }
+    .logo {
+      font-family: var(--font-alt);
+      font-size: 22px;
+      font-weight: 800;
+      color: white;
+      line-height: 1;
+    }
+    .logo span { font-size: 12px; font-weight: 400; display: block; letter-spacing: 1px; }
+    .back-link {
+      font-family: var(--font-alt);
+      color: var(--yellow-main);
+      font-weight: 700;
+      font-size: 14px;
+      text-transform: uppercase;
+    }
+    .back-link:hover { opacity: 0.8; }
+
+    /* Legenda */
+    .legend-bar {
+      background: white;
+      padding: 15px 20px;
+      border-bottom: 1px solid #ddd;
+    }
+    .legend-bar .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-alt);
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .legend-box {
+      width: 20px;
+      height: 20px;
+      border-radius: 3px;
+      border: 1px solid #ccc;
+    }
+    .legend-box.disponivel { background: #4CAF50; border-color: #388E3C; }
+    .legend-box.reservado { background: #FFC107; border-color: #FFA000; }
+    .legend-box.vendido { background: #F44336; border-color: #D32F2F; }
+    .legend-box.selecionado { background: #2196F3; border-color: #1976D2; }
+
+    /* Main Content */
+    .main-content {
+      max-width: 1400px;
+      margin: 30px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+
+    /* Imagem do Prédio */
+    .building-image {
+      position: sticky;
+      top: 20px;
+      align-self: start;
+    }
+    .building-image img {
+      width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    }
+    .building-image h2 {
+      font-family: var(--font-alt);
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--purple-main);
+      margin-top: 20px;
+      text-transform: uppercase;
+    }
+    .building-image p {
+      font-size: 14px;
+      color: #777;
+      margin-top: 5px;
+    }
+
+    /* Prédio Visual */
+    .building-visual {
+      background: white;
+      border-radius: 10px;
+      padding: 25px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .building-visual h3 {
+      font-family: var(--font-alt);
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--purple-main);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    /* Andar */
+    .floor {
+      display: flex;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    .floor-label {
+      font-family: var(--font-alt);
+      font-size: 13px;
+      font-weight: 700;
+      color: #555;
+      width: 80px;
+      text-align: right;
+      padding-right: 12px;
+      flex-shrink: 0;
+    }
+    .floor-units {
+      display: flex;
+      gap: 4px;
+      flex: 1;
+    }
+
+    /* Unit Box */
+    .unit-box {
+      flex: 1;
+      padding: 10px 5px;
+      border-radius: 6px;
+      text-align: center;
+      font-family: var(--font-alt);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: default;
+      transition: all 0.2s;
+      border: 2px solid transparent;
+      position: relative;
+    }
+    .unit-box .unit-number { font-size: 14px; font-weight: 800; }
+    .unit-box .unit-area { font-size: 10px; font-weight: 400; opacity: 0.8; }
+
+    .unit-box.disponivel {
+      background: #E8F5E9;
+      color: #2E7D32;
+      border-color: #4CAF50;
+      cursor: pointer;
+    }
+    .unit-box.disponivel:hover {
+      background: #C8E6C9;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(76,175,80,0.3);
+    }
+    .unit-box.vendido {
+      background: #FFEBEE;
+      color: #C62828;
+      border-color: #EF9A9A;
+    }
+    .unit-box.vendido .unit-number { text-decoration: line-through; }
+    .unit-box.reservado {
+      background: #FFF8E1;
+      color: #F57F17;
+      border-color: #FFD54F;
+    }
+    .unit-box.selecionado {
+      background: #E3F2FD;
+      color: #1565C0;
+      border-color: #2196F3;
+      box-shadow: 0 4px 12px rgba(33,150,243,0.3);
+      transform: translateY(-2px);
+    }
+    .unit-box.selecionado::after {
+      content: "✓";
+      position: absolute;
+      top: 2px;
+      right: 5px;
+      font-size: 14px;
+      color: #1565C0;
+    }
+
+    /* Seleção e Formulário */
+    .selection-section {
+      max-width: 1400px;
+      margin: 0 auto 40px auto;
+      padding: 0 20px;
+    }
+    .selection-panel {
+      background: white;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .selection-panel h3 {
+      font-family: var(--font-alt);
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--purple-main);
+      margin-bottom: 20px;
+      text-transform: uppercase;
+    }
+
+    .selected-units {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      min-height: 50px;
+      padding: 15px;
+      background: #f9f9f9;
+      border: 2px dashed #ddd;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      align-items: center;
+    }
+    .selected-units.empty::before {
+      content: "Clique nas unidades verdes acima para selecionar";
+      color: #aaa;
+      font-family: var(--font-alt);
+      font-size: 14px;
+    }
+    .selected-tag {
+      background: #E3F2FD;
+      color: #1565C0;
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-family: var(--font-alt);
+      font-weight: 700;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .selected-tag .remove {
+      cursor: pointer;
+      font-size: 16px;
+      color: #F44336;
+      font-weight: 800;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 0;
+      border-top: 1px solid #eee;
+      font-family: var(--font-alt);
+    }
+    .summary-label { font-size: 16px; color: #555; }
+    .summary-value { font-size: 20px; font-weight: 800; color: var(--purple-main); }
+
+    /* Form de Reserva */
+    .reservation-form {
+      margin-top: 25px;
+      display: none;
+    }
+    .reservation-form.show { display: block; }
+    .reservation-form h4 {
+      font-family: var(--font-alt);
+      font-size: 18px;
+      font-weight: 800;
+      color: #333;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    .form-row input {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid #eee;
+      border-radius: 8px;
+      font-family: var(--font-alt);
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+    .form-row input:focus { border-color: var(--purple-main); }
+    .btn-reserve {
+      width: 100%;
+      padding: 18px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-family: var(--font-alt);
+      font-size: 18px;
+      font-weight: 800;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.3s;
+      letter-spacing: 1px;
+    }
+    .btn-reserve:hover { background: #388E3C; }
+    .btn-reserve:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    /* Tabela de unidades */
+    .units-table {
+      margin-top: 20px;
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .units-table th {
+      background: var(--purple-main);
+      color: white;
+      padding: 10px;
+      font-family: var(--font-alt);
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+    .units-table td {
+      padding: 8px 10px;
+      text-align: center;
+      font-family: var(--font-alt);
+      font-size: 13px;
+      border-bottom: 1px solid #eee;
+    }
+    .units-table tr.disponivel { background: #E8F5E9; }
+    .units-table tr.vendido { background: #FFEBEE; color: #999; }
+    .units-table tr.vendido td { text-decoration: line-through; }
+    .units-table tr.reservado { background: #FFF8E1; }
+    .status-badge {
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      text-decoration: none !important;
+    }
+    .status-badge.disponivel { background: #4CAF50; color: white; }
+    .status-badge.vendido { background: #F44336; color: white; }
+    .status-badge.reservado { background: #FFC107; color: #333; }
+
+    /* Responsive */
+    @media(max-width: 900px) {
+      .main-content { grid-template-columns: 1fr; }
+      .building-image { position: static; }
+      .form-row { grid-template-columns: 1fr; }
+      .floor-label { width: 55px; font-size: 11px; }
+      .unit-box .unit-number { font-size: 11px; }
+      .unit-box .unit-area { font-size: 9px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="index.html" class="logo">FIRENZE STUDIOS <span>Sinhaninha II</span></a>
+      <a href="index.html" class="back-link">← Voltar ao Site</a>
+    </div>
+  </nav>
+
+  <!-- Legenda -->
+  <div class="legend-bar">
+    <div class="container">
+      <strong style="font-family:var(--font-alt); font-size:14px;">LEGENDA:</strong>
+      <div class="legend-item"><div class="legend-box disponivel"></div> Disponível</div>
+      <div class="legend-item"><div class="legend-box reservado"></div> Reservado</div>
+      <div class="legend-item"><div class="legend-box vendido"></div> Vendido</div>
+      <div class="legend-item"><div class="legend-box selecionado"></div> Selecionado</div>
+    </div>
+  </div>
+
+  <!-- Conteúdo Principal -->
+  <div class="main-content">
+    <!-- Imagem do Prédio -->
+    <div class="building-image">
+      <img src="02 com logo.jpg" alt="Firenze Studios - Fachada" />
+      <h2>Firenze Studios</h2>
+      <p>Sinhaninha II · Oliveira-MG · 42 Unidades · 14 Andares</p>
+
+      <!-- Tabela Resumo -->
+      <table class="units-table" style="margin-top:25px;">
+        <thead>
+          <tr><th>Unidade</th><th>Área (m²)</th><th>Status</th></tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+
+    <!-- Prédio Visual -->
+    <div class="building-visual">
+      <h3>🏢 Selecione suas Unidades</h3>
+      <div id="buildingGrid"></div>
+    </div>
+  </div>
+
+  <!-- Seção de Seleção e Reserva -->
+  <div class="selection-section">
+    <div class="selection-panel">
+      <h3>📋 Sua Seleção</h3>
+      <div class="selected-units empty" id="selectedUnits"></div>
+
+      <div class="summary-row">
+        <span class="summary-label">Unidades selecionadas:</span>
+        <span class="summary-value" id="totalUnits">0</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Área total:</span>
+        <span class="summary-value" id="totalArea">0 m²</span>
+      </div>
+
+      <div class="reservation-form" id="reservationForm">
+        <h4>📝 Confirme seus dados para reserva</h4>
+        <div class="form-row">
+          <input type="text" id="nomeCompleto" placeholder="Nome Completo" required />
+          <input type="tel" id="telefone" placeholder="Telefone com DDD" required />
+        </div>
+        <button class="btn-reserve" id="btnReserve" onclick="enviarReserva()">
+          ✅ CONFIRMAR RESERVA VIA WHATSAPP
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Dados das 42 unidades
+    // Status: 'disponivel', 'vendido', 'reservado'
+    const units = [
+      // Andar 1 (2 unidades)
+      { id: '101', floor: 1, area: 30.94, status: 'vendido' },
+      { id: '102', floor: 1, area: 30.94, status: 'reservado' },
+      // Andar 2
+      { id: '201', floor: 2, area: 30.94, status: 'vendido' },
+      { id: '202', floor: 2, area: 30.94, status: 'vendido' },
+      { id: '203', floor: 2, area: 35.73, status: 'reservado' },
+      { id: '204', floor: 2, area: 30.94, status: 'vendido' },
+      // Andar 3
+      { id: '301', floor: 3, area: 30.94, status: 'vendido' },
+      { id: '302', floor: 3, area: 30.94, status: 'vendido' },
+      { id: '303', floor: 3, area: 35.73, status: 'reservado' },
+      { id: '304', floor: 3, area: 30.94, status: 'vendido' },
+      // Andar 4
+      { id: '401', floor: 4, area: 30.94, status: 'disponivel' },
+      { id: '402', floor: 4, area: 30.94, status: 'vendido' },
+      { id: '403', floor: 4, area: 35.73, status: 'disponivel' },
+      { id: '404', floor: 4, area: 30.94, status: 'vendido' },
+      // Andar 5
+      { id: '501', floor: 5, area: 30.94, status: 'vendido' },
+      { id: '502', floor: 5, area: 30.94, status: 'disponivel' },
+      { id: '503', floor: 5, area: 35.73, status: 'reservado' },
+      { id: '504', floor: 5, area: 30.94, status: 'vendido' },
+      // Andar 6
+      { id: '601', floor: 6, area: 30.94, status: 'vendido' },
+      { id: '602', floor: 6, area: 30.94, status: 'vendido' },
+      { id: '603', floor: 6, area: 35.73, status: 'disponivel' },
+      { id: '604', floor: 6, area: 30.94, status: 'reservado' },
+      // Andar 7
+      { id: '701', floor: 7, area: 30.94, status: 'vendido' },
+      { id: '702', floor: 7, area: 30.94, status: 'disponivel' },
+      { id: '703', floor: 7, area: 35.73, status: 'disponivel' },
+      { id: '704', floor: 7, area: 30.94, status: 'vendido' },
+      // Andar 8
+      { id: '801', floor: 8, area: 30.94, status: 'vendido' },
+      { id: '802', floor: 8, area: 30.94, status: 'disponivel' },
+      { id: '803', floor: 8, area: 35.73, status: 'reservado' },
+      { id: '804', floor: 8, area: 30.94, status: 'vendido' },
+      // Andar 9
+      { id: '901', floor: 9, area: 30.94, status: 'vendido' },
+      { id: '902', floor: 9, area: 30.94, status: 'disponivel' },
+      { id: '903', floor: 9, area: 35.73, status: 'reservado' },
+      { id: '904', floor: 9, area: 30.94, status: 'vendido' },
+      // Andar 10
+      { id: '1001', floor: 10, area: 30.94, status: 'vendido' },
+      { id: '1002', floor: 10, area: 30.94, status: 'disponivel' },
+      { id: '1003', floor: 10, area: 35.73, status: 'reservado' },
+      { id: '1004', floor: 10, area: 30.94, status: 'vendido' },
+      // Andar 11
+      { id: '1101', floor: 11, area: 30.94, status: 'vendido' },
+      { id: '1102', floor: 11, area: 30.94, status: 'disponivel' },
+      { id: '1103', floor: 11, area: 35.73, status: 'disponivel' },
+      { id: '1104', floor: 11, area: 30.94, status: 'vendido' },
+    ];
+
+    let selectedUnits = [];
+
+    // Renderizar o prédio visual
+    function renderBuilding() {
+      const grid = document.getElementById('buildingGrid');
+      grid.innerHTML = '';
+
+      // Agrupar por andar
+      const floors = {};
+      units.forEach(u => {
+        if (!floors[u.floor]) floors[u.floor] = [];
+        floors[u.floor].push(u);
+      });
+
+      // Renderizar de cima para baixo (andar 11 -> 1)
+      const floorNumbers = Object.keys(floors).map(Number).sort((a,b) => b - a);
+
+      floorNumbers.forEach(floorNum => {
+        const floorDiv = document.createElement('div');
+        floorDiv.className = 'floor';
+
+        const label = document.createElement('div');
+        label.className = 'floor-label';
+        label.textContent = floorNum + 'º Andar';
+        floorDiv.appendChild(label);
+
+        const unitsDiv = document.createElement('div');
+        unitsDiv.className = 'floor-units';
+
+        floors[floorNum].forEach(unit => {
+          const box = document.createElement('div');
+          box.className = 'unit-box ' + unit.status;
+          box.id = 'unit-' + unit.id;
+          box.innerHTML = `
+            <div class="unit-number">Ap. ${unit.id}</div>
+            <div class="unit-area">${unit.area} m²</div>
+          `;
+
+          if (unit.status === 'disponivel') {
+            box.onclick = () => toggleUnit(unit);
+          }
+
+          unitsDiv.appendChild(box);
+        });
+
+        // Se andar 1 tem só 2 unidades, adicionar espaços vazios
+        if (floorNum === 1) {
+          for (let i = floors[floorNum].length; i < 4; i++) {
+            const empty = document.createElement('div');
+            empty.style.flex = '1';
+            unitsDiv.appendChild(empty);
+          }
+        }
+
+        floorDiv.appendChild(unitsDiv);
+        grid.appendChild(floorDiv);
+      });
+    }
+
+    // Renderizar tabela
+    function renderTable() {
+      const tbody = document.getElementById('tableBody');
+      tbody.innerHTML = '';
+
+      units.forEach(unit => {
+        const tr = document.createElement('tr');
+        tr.className = unit.status;
+
+        const statusLabel = unit.status === 'disponivel' ? 'Disponível' :
+                           unit.status === 'vendido' ? 'Vendido' : 'Reservado';
+
+        tr.innerHTML = `
+          <td>Ap. ${unit.id}</td>
+          <td>${unit.area} m²</td>
+          <td><span class="status-badge ${unit.status}">${statusLabel}</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Toggle seleção de unidade
+    function toggleUnit(unit) {
+      const idx = selectedUnits.findIndex(u => u.id === unit.id);
+      const box = document.getElementById('unit-' + unit.id);
+
+      if (idx >= 0) {
+        selectedUnits.splice(idx, 1);
+        box.className = 'unit-box disponivel';
+      } else {
+        selectedUnits.push(unit);
+        box.className = 'unit-box selecionado';
+      }
+
+      updateSelection();
+    }
+
+    // Remover unidade da seleção
+    function removeUnit(unitId) {
+      const idx = selectedUnits.findIndex(u => u.id === unitId);
+      if (idx >= 0) {
+        selectedUnits.splice(idx, 1);
+        const box = document.getElementById('unit-' + unitId);
+        if (box) box.className = 'unit-box disponivel';
+        updateSelection();
+      }
+    }
+
+    // Atualizar painel de seleção
+    function updateSelection() {
+      const container = document.getElementById('selectedUnits');
+      const totalUnits = document.getElementById('totalUnits');
+      const totalArea = document.getElementById('totalArea');
+      const form = document.getElementById('reservationForm');
+
+      if (selectedUnits.length === 0) {
+        container.innerHTML = '';
+        container.className = 'selected-units empty';
+        totalUnits.textContent = '0';
+        totalArea.textContent = '0 m²';
+        form.className = 'reservation-form';
+      } else {
+        container.className = 'selected-units';
+        container.innerHTML = selectedUnits.map(u =>
+          `<div class="selected-tag">
+            Ap. ${u.id} (${u.area} m²)
+            <span class="remove" onclick="removeUnit('${u.id}')">✕</span>
+          </div>`
+        ).join('');
+
+        totalUnits.textContent = selectedUnits.length;
+        const area = selectedUnits.reduce((sum, u) => sum + u.area, 0);
+        totalArea.textContent = area.toFixed(2) + ' m²';
+        form.className = 'reservation-form show';
+      }
+    }
+
+    // Enviar reserva via WhatsApp
+    function enviarReserva() {
+      const nome = document.getElementById('nomeCompleto').value.trim();
+      const telefone = document.getElementById('telefone').value.trim();
+
+      if (!nome) { alert('Por favor, preencha seu nome completo.'); return; }
+      if (!telefone) { alert('Por favor, preencha seu telefone.'); return; }
+      if (selectedUnits.length === 0) { alert('Selecione pelo menos uma unidade.'); return; }
+
+      const unidadesTexto = selectedUnits.map(u => `Ap. ${u.id} (${u.area} m²)`).join(', ');
+      const areaTotal = selectedUnits.reduce((sum, u) => sum + u.area, 0).toFixed(2);
+
+      const mensagem = `🏢 *RESERVA FIRENZE STUDIOS*\n\n` +
+        `👤 *Nome:* ${nome}\n` +
+        `📱 *Telefone:* ${telefone}\n\n` +
+        `🏠 *Unidades selecionadas:* ${unidadesTexto}\n` +
+        `📐 *Área total:* ${areaTotal} m²\n` +
+        `📊 *Qtd. unidades:* ${selectedUnits.length}\n\n` +
+        `Gostaria de confirmar a reserva dessas unidades.`;
+
+      const url = 'https://wa.me/5511941177700?text=' + encodeURIComponent(mensagem);
+      window.open(url, '_blank');
+    }
+
+    // Inicializar
+    renderBuilding();
+    renderTable();
+  </script>
+</body>
+</html>
