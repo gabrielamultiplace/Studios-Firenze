@@ -3273,8 +3273,10 @@
         document.getElementById('kanbanDatesSection').style.display = 'block';
         const datesDiv = document.getElementById('kanbanModalDates');
         
-        // Se está em modo edição, mostra campos
+        console.log('Renderizando datas. isModalEditMode.dates =', isModalEditMode.dates);
+        
         if (isModalEditMode.dates) {
+          console.log('Modo EDIÇÃO de datas');
           let editHtml = '';
           Object.entries(lead.importantDates).forEach(([name, date]) => {
             editHtml += `
@@ -3292,15 +3294,17 @@
           `;
           datesDiv.innerHTML = editHtml;
         } else {
-          // Se não está em modo edição, mostra apenas visualização
+          console.log('Modo VISUALIZAÇÃO de datas');
           let viewHtml = '';
           Object.entries(lead.importantDates).forEach(([name, date]) => {
             viewHtml += `<div style="font-size:12px; margin-bottom:8px;"><strong>${name}:</strong> ${new Date(date).toLocaleDateString('pt-BR')}</div>`;
           });
           viewHtml += `<div style="margin-top:10px;">
-            <button class="kanban-btn-primary" onclick="toggleModalEditMode('dates')" style="width:100%;">Editar Datas</button>
+            <button class="kanban-btn-primary" onclick="toggleModalEditMode('dates')" style="width:100%; padding:10px; border:none; margin-top:8px;">Editar Datas</button>
           </div>`;
+          console.log('HTML a renderizar:', viewHtml);
           datesDiv.innerHTML = viewHtml;
+          console.log('Datas renderizadas. innerHTML agora é:', datesDiv.innerHTML);
         }
       } else {
         document.getElementById('kanbanDatesSection').style.display = 'none';
