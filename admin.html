@@ -2878,15 +2878,11 @@
       const statuses = ['novo', 'contato', 'analise', 'aprovado', 'finalizado'];
       const currentUser = getCurrentUser() || 'Sistema';
       
-      console.log('renderKanban chamado com', leads.length, 'leads', leads);
-      
       statuses.forEach(status => {
         const content = document.getElementById('kanban-' + status);
-        console.log('Procurando por kanban-' + status, ':', content ? 'ENCONTRADO' : 'NÃO ENCONTRADO');
         if (!content) return;
         
         const statusLeads = leads.filter(l => l.status === status);
-        console.log('Leads com status "' + status + '":', statusLeads.length);
         
         const count = content.parentElement.querySelector('.kanban-column-count');
         if (count) count.textContent = statusLeads.length;
@@ -3118,7 +3114,7 @@
             <div><strong>Nome:</strong> <input type="text" id="editNome" value="${lead.nome || ''}" style="width:100%; padding:4px; border:1px solid #ddd; border-radius:4px;"></div>
           </div>
           <div style="margin-top:10px; display:flex; gap:8px;">
-            <button class="kanban-btn-primary" onclick="toggleModalEditMode('info')" style="flex:1;">Salvar</button>
+            <button class="kanban-btn-primary" onclick="saveAndDeactivateEditMode('info')" style="flex:1;">Salvar</button>
             <button class="kanban-btn-secondary" onclick="toggleModalEditMode('info')" style="flex:1;">Cancelar</button>
           </div>
         `;
@@ -3127,7 +3123,7 @@
         descDiv.innerHTML = `
           <textarea id="editDescription" style="width:100%; min-height:80px; padding:8px; border:1px solid #ddd; border-radius:4px; font-family:var(--font-main); font-size:12px;">${lead.description || ''}</textarea>
           <div style="margin-top:10px; display:flex; gap:8px;">
-            <button class="kanban-btn-primary" onclick="toggleModalEditMode('description')" style="flex:1;">Salvar</button>
+            <button class="kanban-btn-primary" onclick="saveAndDeactivateEditMode('description')" style="flex:1;">Salvar</button>
             <button class="kanban-btn-secondary" onclick="toggleModalEditMode('description')" style="flex:1;">Cancelar</button>
           </div>
         `;
@@ -3144,7 +3140,7 @@
         });
         datesEditHtml += `
           <div style="margin-top:10px; display:flex; gap:8px;">
-            <button class="kanban-btn-primary" onclick="toggleModalEditMode('dates')" style="flex:1;">Salvar</button>
+            <button class="kanban-btn-primary" onclick="saveAndDeactivateEditMode('dates')" style="flex:1;">Salvar</button>
             <button class="kanban-btn-secondary" onclick="toggleModalEditMode('dates')" style="flex:1;">Cancelar</button>
           </div>
         `;
@@ -3309,6 +3305,7 @@
 
       // Histórico
       if (lead.history && lead.history.length > 0) {
+        document.getElementById('kanbanModalHistory').innerHTML = '';
         let historyHtml = '';
         lead.history.slice().reverse().forEach(h => {
           try {
@@ -3327,7 +3324,7 @@
         });
         document.getElementById('kanbanModalHistory').innerHTML = historyHtml;
       } else {
-        document.getElementById('kanbanModalHistory').innerHTML = '<div style="font-size:12px; color:#999;">Sem histórico registrado</div>';
+        document.getElementById('kanbanModalHistory').innerHTML = '<div style="font-size:12px; color:#999;margin-top:10px;">Sem histórico registrado</div>';
       }
 
       overlay.classList.add('active');
