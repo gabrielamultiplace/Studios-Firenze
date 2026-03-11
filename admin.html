@@ -3090,10 +3090,9 @@
 
     function toggleModalEditMode(field) {
       isModalEditMode[field] = !isModalEditMode[field];
-      if (isModalEditMode[field]) {
-        activateEditMode(field);
-      } else {
-        saveAndDeactivateEditMode(field);
+      // Re-renderiza o modal para atualizar visualização/edição
+      if (currentEditingLeadId) {
+        openKanbanModal(currentEditingLeadId);
       }
     }
 
@@ -3272,16 +3271,40 @@
         }
       }
       
+      // Renderiza seção de datas
       if (lead.importantDates && Object.keys(lead.importantDates).length > 0) {
         document.getElementById('kanbanDatesSection').style.display = 'block';
-        let datesHtml = '';
-        Object.entries(lead.importantDates).forEach(([name, date]) => {
-          datesHtml += `<div style="font-size:12px; margin-bottom:8px;"><strong>${name}:</strong> ${new Date(date).toLocaleDateString('pt-BR')}</div>`;
-        });
-        datesHtml += `<div style="margin-top:10px;">
-          <button class="kanban-btn-primary" onclick="toggleModalEditMode('dates')" style="width:100%;">Editar Datas</button>
-        </div>`;
-        document.getElementById('kanbanModalDates').innerHTML = datesHtml;
+        const datesDiv = document.getElementById('kanbanModalDates');
+        
+        // Se está em modo edição, mostra campos
+        if (isModalEditMode.dates) {
+          let editHtml = '';
+          Object.entries(lead.importantDates).forEach(([name, date]) => {
+            editHtml += `
+              <div style="margin-bottom:12px;">
+                <label style="font-size:12px; font-weight:600; color:#666; display:block; margin-bottom:4px;">${name}</label>
+                <input type="date" data-date-field="${name}" value="${date}" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px; font-size:12px;">
+              </div>
+            `;
+          });
+          editHtml += `
+            <div style="margin-top:10px; display:flex; gap:8px;">
+              <button class="kanban-btn-primary" onclick="saveAndDeactivateEditMode('dates')" style="flex:1;">Salvar</button>
+              <button class="kanban-btn-secondary" onclick="toggleModalEditMode('dates')" style="flex:1;">Cancelar</button>
+            </div>
+          `;
+          datesDiv.innerHTML = editHtml;
+        } else {
+          // Se não está em modo edição, mostra apenas visualização
+          let viewHtml = '';
+          Object.entries(lead.importantDates).forEach(([name, date]) => {
+            viewHtml += `<div style="font-size:12px; margin-bottom:8px;"><strong>${name}:</strong> ${new Date(date).toLocaleDateString('pt-BR')}</div>`;
+          });
+          viewHtml += `<div style="margin-top:10px;">
+            <button class="kanban-btn-primary" onclick="toggleModalEditMode('dates')" style="width:100%;">Editar Datas</button>
+          </div>`;
+          datesDiv.innerHTML = viewHtml;
+        }
       } else {
         document.getElementById('kanbanDatesSection').style.display = 'none';
       }
