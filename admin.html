@@ -1,17 +1,19 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Admin | Firenze Studios</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Jost:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>Admin | Plataforma MCMV (Base)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
   <style>
+
     :root {
       --purple-main: #4a0e78;
       --purple-dark: #2d084f;
       --yellow-main: #ffb703;
-      --font-alt: 'Jost', sans-serif;
-      --font-main: 'DM Sans', sans-serif;
+      --font-display: 'Cormorant Garamond', 'Times New Roman', serif;
+      --font-alt: 'Montserrat', 'Avenir Next', 'Segoe UI', sans-serif;
+      --font-main: 'Manrope', 'Segoe UI', sans-serif;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: var(--font-main); background: #f0f0f5; min-height: 100vh; }
@@ -182,7 +184,768 @@
     }
     .btn-clear-waitlist:hover { background: #D32F2F; }
 
-    /* ===== LOADING ===== */
+    /* ===== FORM MCMV ===== */
+    .mcmv-form-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .mcmv-form-grid input, .mcmv-form-grid select {
+      width: 100%; padding: 11px 12px; border: 2px solid #eee; border-radius: 8px;
+      font-family: var(--font-main); outline: none;
+    }
+    .mcmv-form-grid input:focus, .mcmv-form-grid select:focus { border-color: var(--purple-main); }
+    .mcmv-actions { display: flex; gap: 10px; flex-wrap: wrap; margin: 8px 0 4px; }
+    .btn-add-lead {
+      padding: 11px 16px; background: var(--purple-main); color: white; border: none;
+      border-radius: 8px; font-family: var(--font-alt); font-size: 13px; font-weight: 700;
+      text-transform: uppercase; cursor: pointer;
+    }
+    .btn-add-lead:hover { background: var(--purple-dark); }
+    .mcmv-note { font-size: 12px; color: #888; margin: 2px 0 14px; }
+    .mcmv-feedback { font-size: 13px; font-weight: 700; margin: 8px 0 2px; }
+    .stage-select {
+      padding: 7px 8px; border: 2px solid #ddd; border-radius: 6px;
+      font-size: 12px; font-family: var(--font-alt); font-weight: 700;
+      background: #fff;
+    }
+    .badge {
+      display: inline-block; padding: 3px 8px; border-radius: 999px;
+      font-size: 11px; font-weight: 700; font-family: var(--font-alt); text-transform: uppercase;
+    }
+    .badge.faixa1 { background: #E8F5E9; color: #2E7D32; }
+    .badge.faixa2 { background: #E3F2FD; color: #1565C0; }
+    .badge.faixa3 { background: #FFF8E1; color: #F57F17; }
+    .badge.faixa4 { background: #F3E5F5; color: #6A1B9A; }
+    .badge.invalida { background: #FFEBEE; color: #C62828; }
+    .badge.etapa-cadastro { background: #ECEFF1; color: #455A64; }
+    .badge.etapa-analise { background: #E3F2FD; color: #1565C0; }
+    .badge.etapa-documentacao { background: #FFF8E1; color: #F57F17; }
+    .badge.etapa-aprovacao { background: #E8F5E9; color: #2E7D32; }
+    .badge.etapa-contrato { background: #F3E5F5; color: #6A1B9A; }
+
+    /* ===== PRE-REQUISITOS ===== */
+    .prereq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+    .prereq-box {
+      border: 2px solid #eee; border-radius: 10px; padding: 18px;
+    }
+    .prereq-box h4 {
+      font-family: var(--font-alt); font-size: 14px; font-weight: 800;
+      color: var(--purple-main); text-transform: uppercase; margin-bottom: 12px;
+    }
+    .prereq-box ul { list-style: none; padding: 0; }
+    .prereq-box ul li {
+      font-size: 13px; padding: 5px 0; border-bottom: 1px solid #f5f5f5;
+      display: flex; gap: 8px;
+    }
+    .prereq-box ul li::before { content: ''; color: var(--purple-main); font-weight: 700; flex-shrink: 0; }
+    .checklist-tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+    .checklist-tab {
+      padding: 8px 16px; border: 2px solid #e0e0e0; border-radius: 6px;
+      font-family: var(--font-alt); font-weight: 700; font-size: 12px;
+      cursor: pointer; text-transform: uppercase;
+    }
+    .checklist-tab.active { background: var(--purple-main); color: white; border-color: var(--purple-main); }
+    .checklist-list { list-style: none; padding: 0; }
+    .checklist-list li {
+      display: flex; align-items: flex-start; gap: 10px; padding: 9px 0;
+      border-bottom: 1px solid #f0f0f0; font-size: 13px;
+    }
+    .checklist-list li input[type=checkbox] { margin-top: 2px; flex-shrink: 0; accent-color: var(--purple-main); width:16px; height:16px; }
+    .checklist-list li label { cursor: pointer; line-height: 1.4; }
+    .alert-box {
+      background: #FFF8E1; border-left: 4px solid #FF9800; border-radius: 8px;
+      padding: 14px 16px; font-size: 13px; margin-bottom: 14px;
+    }
+    .alert-box strong { display: block; margin-bottom: 4px; color: #E65100; font-family: var(--font-alt); }
+    @media(max-width: 768px) { .prereq-grid { grid-template-columns: 1fr; } }
+
+  /* ===== FAIXAS CONFIG ===== */
+  .faixas-config-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  .faixa-config-card { border: 2px solid #eee; border-radius: 12px; padding: 20px; }
+  .faixa-config-card.f1 { border-color: #A5D6A7; background: #F9FFF9; }
+  .faixa-config-card.f2 { border-color: #90CAF9; background: #F3F9FF; }
+  .faixa-config-card.f3 { border-color: #FFCC80; background: #FFFDF5; }
+  .faixa-config-card.f4 { border-color: #EF9A9A; background: #FFF8F8; }
+  .faixa-config-card h4 { font-family: var(--font-alt); font-size: 15px; font-weight: 800; text-transform: uppercase; margin-bottom: 12px; color: #333; }
+  .faixa-range-display { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #888; margin-bottom: 10px; flex-wrap: wrap; }
+  .faixa-range-min { font-weight: 700; color: #555; }
+  .faixa-input-group { display: flex; align-items: center; gap: 8px; }
+  .faixa-currency { font-size: 14px; font-weight: 700; color: #666; white-space: nowrap; }
+  .faixa-input-group input { flex: 1; padding: 10px 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 18px; font-family: var(--font-main); font-weight: 700; color: #333; transition: border-color 0.2s; box-sizing: border-box; }
+  .faixa-input-group input:focus { outline: none; border-color: var(--purple-main); }
+  .save-faixas-btn { background: var(--purple-main); color: white; border: none; border-radius: 8px; padding: 12px 28px; font-family: var(--font-alt); font-weight: 800; font-size: 14px; cursor: pointer; text-transform: uppercase; }
+  .save-faixas-btn:hover { background: #5c2db0; }
+  .reset-faixas-btn { background: white; color: #888; border: 2px solid #ddd; border-radius: 8px; padding: 12px 20px; font-family: var(--font-alt); font-weight: 700; font-size: 13px; cursor: pointer; }
+  .reset-faixas-btn:hover { border-color: #aaa; color: #555; }
+  .faixa-preview-badge { padding: 8px 14px; border-radius: 20px; font-size: 12px; font-family: var(--font-alt); font-weight: 700; }
+  .imovel-limites-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+  .imovel-limites-grid .field {
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .imovel-limites-grid label {
+    font-size: 12px; font-weight: 700; color: #666; font-family: var(--font-alt);
+    text-transform: uppercase;
+  }
+  .imovel-limites-grid input {
+    width: 100%; padding: 10px 12px; border: 2px solid #ddd; border-radius: 8px;
+    font-size: 15px; font-family: var(--font-main); font-weight: 700;
+  }
+  .imovel-limites-grid input:focus { outline: none; border-color: var(--purple-main); }
+  @media(max-width: 768px) { .faixas-config-grid { grid-template-columns: 1fr; } }
+  @media(max-width: 768px) { .imovel-limites-grid { grid-template-columns: 1fr; } }
+
+  /* ===== ADMIN MODULE ===== */
+  .admin-module-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .admin-subtitle { font-size: 12px; color: #777; margin-bottom: 10px; text-transform: uppercase; font-family: var(--font-alt); font-weight: 800; }
+  .admin-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  .admin-form-grid input, .admin-form-grid select {
+    width: 100%; padding: 10px 12px; border: 2px solid #e6e6ef; border-radius: 8px;
+    font-family: var(--font-main); font-size: 14px;
+  }
+  .admin-form-grid .full { grid-column: span 2; }
+  .admin-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+  .admin-btn {
+    border: none; border-radius: 8px; padding: 10px 12px; cursor: pointer;
+    font-family: var(--font-alt); font-weight: 800; font-size: 12px; text-transform: uppercase;
+  }
+  .admin-btn.primary { background: var(--purple-main); color: #fff; }
+  .admin-btn.secondary { background: #f3f3f8; color: #444; }
+  .admin-btn.warn { background: #ffebee; color: #b71c1c; }
+  .admin-mini-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+  .admin-mini-table th { background: #2f2f3a; color: #fff; padding: 9px 8px; font-size: 11px; text-transform: uppercase; text-align: left; }
+  .admin-mini-table td { padding: 8px; border-bottom: 1px solid #efefef; font-size: 13px; }
+  .perm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+  .perm-item { background: #fafafe; border: 1px solid #ececf3; border-radius: 8px; padding: 8px; font-size: 12px; }
+  .perm-item label { display: flex; gap: 8px; align-items: center; font-weight: 700; color: #454545; }
+  .admin-status { font-size: 12px; margin-top: 8px; font-weight: 700; }
+  .cc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
+  .cc-item { background: #fafafe; border: 1px solid #ececf3; border-radius: 8px; padding: 8px; font-size: 12px; }
+  @media(max-width: 980px) { .admin-module-grid { grid-template-columns: 1fr; } }
+  @media(max-width: 768px) {
+    .admin-form-grid { grid-template-columns: 1fr; }
+    .admin-form-grid .full { grid-column: auto; }
+    .perm-grid, .cc-grid { grid-template-columns: 1fr; }
+  }
+
+    /* ===== DASHBOARD LAYOUT V2 ===== */
+    .admin-panel {
+      min-height: 100vh;
+      background: #eef1f5;
+    }
+    .admin-nav {
+      background: #ffffff;
+      color: #2f3340;
+      border-bottom: 1px solid #dfe4eb;
+      box-shadow: none;
+      padding: 0 26px;
+    }
+    .admin-nav .container {
+      max-width: 100%;
+    }
+    .admin-nav h2 {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 600;
+      color: #1f2533;
+      letter-spacing: 0.3px;
+      text-transform: none;
+    }
+    .admin-content {
+      max-width: 100%;
+      margin: 0;
+      padding: 18px 26px 26px;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 18px;
+    }
+    .workspace-head {
+      grid-column: 1 / -1;
+      background: #fff;
+      border: 1px solid #dfe4eb;
+      border-radius: 10px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .workspace-breadcrumb {
+      font-size: 11px;
+      font-weight: 700;
+      color: #8a93a2;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 3px;
+    }
+    .workspace-title {
+      font-family: var(--font-alt);
+      font-size: 20px;
+      font-weight: 700;
+      color: #2b3140;
+    }
+    .workspace-btn {
+      border: 1px solid #36a36a;
+      background: #42b976;
+      color: #fff;
+      font-family: var(--font-alt);
+      font-size: 12px;
+      font-weight: 700;
+      border-radius: 4px;
+      padding: 8px 12px;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+    .workspace-btn:hover { background: #379d65; }
+    .admin-tabs {
+      margin-bottom: 0;
+      background: #2f333c;
+      border: 1px solid #2a2d35;
+      border-radius: 8px;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-self: start;
+      position: sticky;
+      top: 84px;
+    }
+    .admin-tab {
+      width: 100%;
+      padding: 11px 12px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: #d7dbe4;
+      font-size: 12px;
+      letter-spacing: 0.3px;
+      text-align: left;
+      text-transform: none;
+    }
+    .admin-tab:hover:not(.active) {
+      color: #fff;
+      border-color: #4f5665;
+      background: #3b414d;
+    }
+    .admin-tab.active {
+      background: #34b26f;
+      border-color: #2ea565;
+      color: #fff;
+    }
+    .admin-tab-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .admin-tab-parent {
+      width: 100%;
+      padding: 11px 12px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: #d7dbe4;
+      font-size: 12px;
+      letter-spacing: 0.3px;
+      text-align: left;
+      text-transform: none;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .admin-tab-parent::after {
+      content: '▼';
+      font-size: 8px;
+      transition: transform 0.3s;
+      margin-left: auto;
+    }
+    .admin-tab-parent.expanded::after {
+      transform: rotate(-180deg);
+    }
+    .admin-tab-parent:hover {
+      color: #fff;
+      border-color: #4f5665;
+      background: #3b414d;
+    }
+    .admin-tab-submenu {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding-left: 12px;
+      border-left: 2px solid #4f5665;
+      margin-left: 4px;
+    }
+    .admin-subtab {
+      padding: 9px 10px !important;
+      font-size: 11px !important;
+      color: #a8b0be !important;
+      background: transparent !important;
+    }
+    .admin-subtab:hover {
+      color: #fff !important;
+      background: #3b414d !important;
+    }
+    .admin-subtab.active {
+      background: #34b26f !important;
+      color: #fff !important;
+      border-color: #2ea565 !important;
+    }
+
+    /* ===== KANBAN ===== */
+    .kanban-board {
+      display: flex;
+      gap: 18px;
+      padding: 16px 10px;
+      overflow-x: auto;
+      background: #f5f6f8;
+      min-height: 650px;
+      border-radius: 8px;
+    }
+    .kanban-board::-webkit-scrollbar {
+      height: 8px;
+    }
+    .kanban-board::-webkit-scrollbar-track {
+      background: #e8ecf1;
+      border-radius: 10px;
+    }
+    .kanban-board::-webkit-scrollbar-thumb {
+      background: #34b26f;
+      border-radius: 10px;
+    }
+    .kanban-column {
+      background: #f0f2f7;
+      border-radius: 6px;
+      min-width: 280px;
+      max-width: 280px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    .kanban-column-header {
+      padding: 12px 10px;
+      background: #f0f2f7;
+      border-bottom: 2px solid #dfe4eb;
+      border-radius: 6px 6px 0 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .kanban-column-title {
+      font-family: var(--font-alt);
+      font-size: 12px;
+      font-weight: 700;
+      color: #2b3140;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .kanban-column-count {
+      background: #34b26f;
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 999px;
+      min-width: 20px;
+      text-align: center;
+    }
+    .kanban-column-content {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .kanban-column-content::-webkit-scrollbar {
+      width: 6px;
+    }
+    .kanban-column-content::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .kanban-column-content::-webkit-scrollbar-thumb {
+      background: #cbd2db;
+      border-radius: 3px;
+    }
+    .kanban-card {
+      background: #2ecc71;
+      border: none;
+      border-radius: 5px;
+      padding: 11px 10px;
+      cursor: grab;
+      transition: all 0.2s;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+      user-select: none;
+      color: white;
+    }
+    .kanban-card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+      transform: translateY(-2px);
+      background: #27ae60;
+    }
+    .kanban-card.dragging {
+      opacity: 0.6;
+      cursor: grabbing;
+      transform: rotate(2deg);
+    }
+    .kanban-card-title {
+      font-family: var(--font-alt);
+      font-size: 13px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 5px;
+      line-height: 1.3;
+    }
+    .kanban-card-info {
+      font-size: 11px;
+      color: rgba(255,255,255,0.95);
+      line-height: 1.35;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .kanban-card-info span {
+      display: block;
+    }
+    .kanban-card-actions {
+      display: flex;
+      gap: 5px;
+      margin-top: 7px;
+      padding-top: 7px;
+      border-top: 1px solid rgba(255,255,255,0.2);
+    }
+    .kanban-card-btn {
+      flex: 1;
+      padding: 5px 6px;
+      font-size: 9px;
+      font-weight: 700;
+      border: 1px solid rgba(255,255,255,0.4);
+      background: rgba(255,255,255,0.15);
+      color: white;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: var(--font-alt);
+      text-transform: uppercase;
+    }
+    .kanban-card-btn:hover {
+      background: rgba(255,255,255,0.3);
+      border-color: rgba(255,255,255,0.6);
+    }
+    .kanban-card-history {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255,255,255,0.2);
+      font-size: 10px;
+      color: rgba(255,255,255,0.85);
+      max-height: 100px;
+      overflow-y: auto;
+    }
+    .kanban-card-history::-webkit-scrollbar {
+      width: 4px;
+    }
+    .kanban-card-history::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.3);
+      border-radius: 2px;
+    }
+    .kanban-history-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 12px;
+      padding: 10px;
+      background: #f5f5f5;
+      border-left: 3px solid #34b26f;
+      border-radius: 4px;
+    }
+    .kanban-history-item:last-child {
+      margin-bottom: 0;
+    }
+    .kanban-history-action {
+      font-weight: 700;
+      font-size: 13px;
+      color: #2b3140;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .kanban-history-user {
+      font-size: 11px;
+      color: #666;
+      font-weight: 600;
+    }
+    .kanban-history-time {
+      font-size: 10px;
+      color: #999;
+      font-style: italic;
+    }
+    .kanban-card-history-toggle {
+      cursor: pointer;
+      padding: 4px 0;
+      margin-bottom: 6px;
+      font-size: 9px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.8);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    /* ===== KANBAN MODAL DETALHES ===== */
+    .kanban-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      z-index: 9998;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .kanban-modal-overlay.active {
+      display: flex;
+    }
+    .kanban-modal {
+      background: white;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    }
+    .kanban-modal-header {
+      background: linear-gradient(135deg, #2ecc71, #27ae60);
+      color: white;
+      padding: 20px;
+      border-radius: 10px 10px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .kanban-modal-header h2 {
+      font-family: var(--font-alt);
+      font-size: 18px;
+      font-weight: 700;
+      margin: 0;
+      line-height: 1.3;
+    }
+    .kanban-modal-close {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .kanban-modal-close:hover {
+      background: rgba(255,255,255,0.3);
+    }
+    .kanban-modal-body {
+      padding: 20px;
+    }
+    .kanban-modal-section {
+      margin-bottom: 20px;
+    }
+    .kanban-modal-section-title {
+      font-family: var(--font-alt);
+      font-size: 13px;
+      font-weight: 700;
+      color: #2b3140;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      letter-spacing: 0.3px;
+    }
+    .kanban-modal-section-content {
+      background: #f8f9fa;
+      border: 1px solid #dfe4eb;
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .kanban-description-field {
+      font-size: 13px;
+      color: #2b3140;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    .kanban-description-field.empty {
+      color: #bbb;
+      font-style: italic;
+    }
+    .kanban-attachments-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .kanban-attachment-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px;
+      background: white;
+      border: 1px solid #e0e3eb;
+      border-radius: 6px;
+      font-size: 12px;
+    }
+    .kanban-attachment-icon {
+      width: 30px;
+      height: 30px;
+      background: #e8f4f8;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: #34b26f;
+      flex-shrink: 0;
+    }
+    .kanban-attachment-info {
+      flex: 1;
+    }
+    .kanban-attachment-name {
+      font-weight: 700;
+      color: #2b3140;
+      margin-bottom: 2px;
+    }
+    .kanban-attachment-date {
+      font-size: 11px;
+      color: #8a93a2;
+    }
+    .kanban-tags-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .kanban-tag {
+      background: #e8f4f8;
+      color: #34b26f;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.2px;
+    }
+    .kanban-checklist-items {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .kanban-checklist-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      padding: 6px 0;
+    }
+    .kanban-checklist-item input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      accent-color: #34b26f;
+    }
+    .kanban-checklist-item label {
+      cursor: pointer;
+      flex: 1;
+      color: #2b3140;
+    }
+    .kanban-checklist-item input[type="checkbox"]:checked + label {
+      color: #bbb;
+      text-decoration: line-through;
+    }
+    .kanban-buttons-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 15px;
+    }
+    .kanban-btn-primary {
+      flex: 1;
+      padding: 10px;
+      background: #34b26f;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-family: var(--font-alt);
+      font-weight: 700;
+      font-size: 12px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .kanban-btn-primary:hover {
+      background: #2a9e5f;
+    }
+    .kanban-btn-secondary {
+      flex: 1;
+      padding: 10px;
+      background: white;
+      color: #34b26f;
+      border: 2px solid #34b26f;
+      border-radius: 6px;
+      font-family: var(--font-alt);
+      font-weight: 700;
+      font-size: 12px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .kanban-btn-secondary:hover {
+      background: #f5fff9;
+    }
+
+    .workspace-main { min-width: 0; }
+    .workspace-main > div { display: none; }
+    .workspace-main > div:first-child { display: block; }
+    .admin-card {
+      border: 1px solid #dfe4eb;
+      border-radius: 10px;
+      box-shadow: none;
+      background: #fff;
+    }
+    .admin-card h3 {
+      font-family: var(--font-alt);
+      font-size: 16px;
+      letter-spacing: 0.25px;
+      color: #3a4252;
+      text-transform: uppercase;
+    }
+    .admin-subtitle {
+      color: #5f6877;
+      font-size: 11px;
+    }
+    .admin-mini-table th {
+      background: #f2f4f8;
+      color: #3f4858;
+      border-bottom: 1px solid #dfe4eb;
+    }
+    @media(max-width: 980px) {
+      .admin-content {
+        grid-template-columns: 1fr;
+      }
+      .admin-tabs {
+        position: static;
+      }
+    }
+
+  /* ===== LOADING ===== */
     .loading {
       text-align: center; padding: 40px; color: #999;
       font-family: var(--font-alt); font-size: 16px;
@@ -200,10 +963,12 @@
       .stats-grid { grid-template-columns: repeat(2, 1fr); }
       .units-admin-grid { grid-template-columns: 1fr; }
       .admin-tabs { flex-wrap: wrap; }
+      .mcmv-form-grid { grid-template-columns: repeat(2, 1fr); }
     }
     @media(max-width: 480px) {
       .stats-grid { grid-template-columns: 1fr 1fr; }
       .admin-nav-links { gap: 8px; }
+      .mcmv-form-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -211,8 +976,8 @@
   <!-- ===== LOGIN ===== -->
   <div class="login-overlay" id="loginOverlay">
     <div class="login-box">
-      <h1>🔐 Painel Admin</h1>
-      <p>Firenze Studios — Gestão de Unidades</p>
+      <h1> Painel Admin</h1>
+      <p>Plataforma Base MCMV - Gestao de Unidades</p>
       <input type="email" id="loginEmail" placeholder="E-mail" autocomplete="email" />
       <input type="password" id="loginPassword" placeholder="Senha" autocomplete="current-password" />
       <button onclick="doLogin()">ENTRAR</button>
@@ -224,103 +989,922 @@
   <div class="admin-panel" id="adminPanel">
     <nav class="admin-nav">
       <div class="container">
-        <h2>🏢 Admin — Firenze Studios</h2>
+        <h2> Admin - Plataforma Base MCMV</h2>
         <div class="admin-nav-links">
-          <a href="disponibilidade.html" target="_blank" class="btn-site">📊 Ver Site</a>
+          <a href="#" class="btn-site" onclick="return false;"> Ver Site (desabilitado)</a>
           <button class="btn-logout" onclick="doLogout()">Sair</button>
         </div>
       </div>
     </nav>
 
     <div class="admin-content">
-      <!-- Stats -->
-      <div class="stats-grid" id="statsGrid"></div>
+      <div class="workspace-head">
+        <div>
+          <p class="workspace-breadcrumb" id="workspaceBreadcrumb">Home > Administracao > Cadastros</p>
+          <p class="workspace-title" id="workspaceTitle">Cadastros</p>
+        </div>
+        <button class="workspace-btn" onclick="handleNovoCadastro()">+ Novo Cadastro</button>
+      </div>
 
       <!-- Tabs -->
       <div class="admin-tabs">
-        <div class="admin-tab active" data-tab="units" onclick="switchTab('units', this)">📦 Unidades</div>
-        <div class="admin-tab" data-tab="waitlist" onclick="switchTab('waitlist', this)">📋 Lista de Espera</div>
+        <div class="admin-tab-group">
+          <div class="admin-tab-parent" onclick="toggleGroup(this)" data-group="comercial"> Comercial</div>
+          <div class="admin-tab-submenu" id="comercial-submenu" style="display:none;">
+            <div class="admin-tab admin-subtab active" data-tab="waitlist" onclick="switchTab('waitlist', this)"> Cadastros</div>
+            <div class="admin-tab admin-subtab" data-tab="crm" onclick="switchTab('crm', this)"> CRM - Kanban</div>
+            <div class="admin-tab admin-subtab" data-tab="prereq" onclick="switchTab('prereq', this)"> Pre-Requisitos MCMV</div>
+            <div class="admin-tab admin-subtab" data-tab="checklist" onclick="switchTab('checklist', this)"> Checklist Documentacao</div>
+            <div class="admin-tab admin-subtab" data-tab="faixas" onclick="switchTab('faixas', this)"> Faixas de Renda</div>
+          </div>
+        </div>
+        
+        <div class="admin-tab" data-tab="admin" onclick="switchTab('admin', this)"> Modulo Administracao</div>
       </div>
 
-      <!-- TAB: Unidades -->
-      <div id="tabUnits">
-        <div class="admin-card">
-          <h3>Gerenciar Status das Unidades</h3>
-          <div id="unitsGridContainer">
-            <div class="loading">Carregando unidades</div>
-          </div>
-          <button class="btn-save" id="btnSave" onclick="saveChanges()">💾 SALVAR ALTERAÇÕES</button>
-          <p class="save-status" id="saveStatus"></p>
-        </div>
-      </div>
+      <div class="workspace-main">
 
       <!-- TAB: Lista de Espera -->
-      <div id="tabWaitlist" style="display:none;">
+      <div id="tabWaitlist">
         <div class="admin-card">
-          <h3>📋 Lista de Espera — Interessados</h3>
+          <h3> Lista de Espera - Interessados (base local)</h3>
+          <div class="mcmv-form-grid">
+            <input id="leadNome" placeholder="Nome completo" />
+            <input id="leadTelefone" placeholder="Telefone (DDD + numero)" />
+            <input id="leadRenda" placeholder="Renda familiar mensal (R$)" />
+            <select id="leadArea">
+              <option value="urbana">Area urbana</option>
+              <option value="rural">Area rural</option>
+            </select>
+            <select id="leadPorteCidade">
+              <option value="acima750">Cidade acima de 750 mil hab.</option>
+              <option value="de300a750">Cidade entre 300 mil e 750 mil hab.</option>
+              <option value="de100a300">Cidade entre 100 mil e 300 mil hab.</option>
+            </select>
+            <input id="leadValorImovel" placeholder="Valor do imovel (R$)" />
+            <input id="leadPrazo" placeholder="Prazo (meses)" value="360" />
+            <select id="leadUsaFgts">
+              <option value="nao">Sem uso de FGTS</option>
+              <option value="sim">Usara FGTS (simulacao)</option>
+            </select>
+          </div>
+          <div class="mcmv-actions">
+            <button class="btn-add-lead" onclick="addWaitlistLead()">+ Adicionar Cadastro</button>
+          </div>
+          <p class="mcmv-note">Validacao automatica: faixa, elegibilidade, limites de imovel por faixa/porte da cidade, subsidio estimado, parcela estimada e funil de etapas.</p>
+          <p class="mcmv-feedback" id="leadFeedback"></p>
           <div id="waitlistContent">
             <div class="loading">Carregando lista</div>
           </div>
         </div>
       </div>
+
+      <!-- TAB: CRM Kanban -->
+      <div id="tabCrm" style="display:none;">
+        <div class="admin-card">
+          <h3> CRM - Gerenciamento de Leads (Kanban)</h3>
+          <p style="font-size: 13px; color: #777; margin-bottom: 16px;">Arraste os cards entre as colunas para atualizar o status dos leads.</p>
+          
+          <div class="kanban-board">
+            <div class="kanban-column" data-status="novo">
+              <div class="kanban-column-header">
+                <span class="kanban-column-title">Novo Lead</span>
+                <span class="kanban-column-count">0</span>
+              </div>
+              <div class="kanban-column-content" id="kanban-novo">
+              </div>
+            </div>
+
+            <div class="kanban-column" data-status="contato">
+              <div class="kanban-column-header">
+                <span class="kanban-column-title">Em Contato</span>
+                <span class="kanban-column-count">0</span>
+              </div>
+              <div class="kanban-column-content" id="kanban-contato">
+              </div>
+            </div>
+
+            <div class="kanban-column" data-status="analise">
+              <div class="kanban-column-header">
+                <span class="kanban-column-title">Em Análise</span>
+                <span class="kanban-column-count">0</span>
+              </div>
+              <div class="kanban-column-content" id="kanban-analise">
+              </div>
+            </div>
+
+            <div class="kanban-column" data-status="aprovado">
+              <div class="kanban-column-header">
+                <span class="kanban-column-title">Aprovado</span>
+                <span class="kanban-column-count">0</span>
+              </div>
+              <div class="kanban-column-content" id="kanban-aprovado">
+              </div>
+            </div>
+
+            <div class="kanban-column" data-status="finalizado">
+              <div class="kanban-column-header">
+                <span class="kanban-column-title">Finalizado</span>
+                <span class="kanban-column-count">0</span>
+              </div>
+              <div class="kanban-column-content" id="kanban-finalizado">
+              </div>
+            </div>
+          </div>
+
+          <!-- Modal de Detalhes do Lead -->
+          <div class="kanban-modal-overlay" id="kanbanModalOverlay">
+            <div class="kanban-modal">
+              <div class="kanban-modal-header">
+                <div>
+                  <h2 id="kanbanModalName">Nome do Lead</h2>
+                  <p style="margin: 4px 0 0; font-size: 12px; opacity: 0.9;" id="kanbanModalSubtitle"></p>
+                </div>
+                <button class="kanban-modal-close" onclick="closeKanbanModal()">×</button>
+              </div>
+              <div class="kanban-modal-body">
+                
+                <!-- Informações Básicas -->
+                <div class="kanban-modal-section">
+                  <div class="kanban-modal-section-title">Informações</div>
+                  <div class="kanban-modal-section-content">
+                    <div id="kanbanModalInfo"></div>
+                  </div>
+                </div>
+
+                <!-- Descrição -->
+                <div class="kanban-modal-section" id="kanbanDescriptionSection">
+                  <div class="kanban-modal-section-title">Descrição</div>
+                  <div class="kanban-modal-section-content">
+                    <div class="kanban-description-field" id="kanbanModalDescription"></div>
+                  </div>
+                </div>
+
+                <!-- Anexos -->
+                <div class="kanban-modal-section" id="kanbanAttachmentsSection" style="display:none;">
+                  <div class="kanban-modal-section-title">Anexos</div>
+                  <div class="kanban-modal-section-content">
+                    <div class="kanban-attachments-list" id="kanbanModalAttachments"></div>
+                    <button class="kanban-btn-secondary" style="width:100%; margin-top:8px;" onclick="addAttachmentToLead()">+ Adicionar Arquivo</button>
+                  </div>
+                </div>
+
+                <!-- Tags/Etiquetas -->
+                <div class="kanban-modal-section" id="kanbanTagsSection" style="display:none;">
+                  <div class="kanban-modal-section-title">Etiquetas</div>
+                  <div class="kanban-modal-section-content">
+                    <div class="kanban-tags-container" id="kanbanModalTags"></div>
+                    <button class="kanban-btn-secondary" style="width:100%; margin-top:8px;" onclick="addTagToLead()">+ Adicionar Etiqueta</button>
+                  </div>
+                </div>
+
+                <!-- Datas Importantes -->
+                <div class="kanban-modal-section" id="kanbanDatesSection" style="display:none;">
+                  <div class="kanban-modal-section-title">Datas Importantes</div>
+                  <div class="kanban-modal-section-content" id="kanbanModalDates"></div>
+                </div>
+
+                <!-- Checklist -->
+                <div class="kanban-modal-section" id="kanbanChecklistSection" style="display:none;">
+                  <div class="kanban-modal-section-title">Checklist</div>
+                  <div class="kanban-modal-section-content">
+                    <div class="kanban-checklist-items" id="kanbanModalChecklist"></div>
+                    <button class="kanban-btn-secondary" style="width:100%; margin-top:8px;" onclick="addChecklistItemToLead()">+ Adicionar Item</button>
+                  </div>
+                </div>
+
+                <!-- Histórico -->
+                <div class="kanban-modal-section">
+                  <div class="kanban-modal-section-title">Histórico de Movimentação</div>
+                  <div class="kanban-modal-section-content">
+                    <div id="kanbanModalHistory"></div>
+                  </div>
+                </div>
+
+                <!-- Botões de Ação -->
+                <div class="kanban-buttons-row">
+                  <button class="kanban-btn-primary" id="kanbanBtnNext" onclick="moveLeadToNextFromModal()">Próximo Status</button>
+                  <button class="kanban-btn-secondary" id="kanbanBtnRemove" onclick="removeLeadFromKanbanModal()">Remover</button>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- TAB: Pre-Requisitos MCMV -->
+      <div id="tabPrereq" style="display:none;">
+        <div class="admin-card">
+          <h3> Pre-Requisitos - Minha Casa Minha Vida (Fonte: CAIXA)</h3>
+          <div class="alert-box">
+            <strong> Atenao</strong>
+            Estas regras sao extraidas da Cartilha Habitacao PF (Versao 12 - DEZ/25) e do Checklist Beneficiario MCMV da CAIXA. Sempre valide com a agencia.
+          </div>
+          <div class="prereq-grid">
+            <div class="prereq-box">
+              <h4> Faixa 1 - Pr-requisitos</h4>
+              <ul>
+                <li>Renda mensal bruta ate R$ 2.850,00 (urbano) ou renda anual ate R$ 40.000 (rural)</li>
+                <li>Nao ser proprietario, cessionario, usufrutuario ou promitente comprador de imovel residencial</li>
+                <li>Nao ter recebido beneficio habitacional com recursos do Oramento da Uniao</li>
+                <li>Nao estar cadastrado no SIACI e/ou CADMUT</li>
+                <li>Nao estar inscrito no CADIN (creditos nao quitados do setor publico federal)</li>
+                <li>Nao ser ou ter sido arrendatario do PAR</li>
+                <li>Sem financiamento residencial ativo em qualquer local do pais</li>
+                <li>Para BPC/Bolsa Familia: possibilidade de imovel gratuito (conforme regras vigentes)</li>
+              </ul>
+            </div>
+            <div class="prereq-box">
+              <h4> Faixas 2, 3 e 4 - Condioes</h4>
+              <ul>
+                <li>Faixa 2: Renda R$ 3.200,01 a R$ 5.000/mes (urbano)</li>
+                <li>Faixa 3: Renda R$ 5.000,01 a R$ 9.600/mes (urbano); imovel ate R$ 400.000</li>
+                <li>Faixa 4: Renda R$ 9.600,01 a R$ 13.000/mes; imovel ate R$ 600.000</li>
+                <li>Faixas 1 e 2: imovel entre R$ 210.000 e o teto do porte da cidade (R$ 275 mil / R$ 270 mil / R$ 245 mil)</li>
+                <li>Inscriao via Caixa Economica Federal ou entidade participante</li>
+                <li>Simulaao de financiamento no site da Caixa (simulacao de credito)</li>
+                <li>Assinatura de contrato apos aprovacao de credito</li>
+                <li>Subsidio maximo estimado: R$ 55.000 (conforme renda e modalidade)</li>
+                <li>Uso de FGTS: abate saldo devedor, parcelas (ate 80% por 12 meses) ou liquidaao</li>
+              </ul>
+            </div>
+            <div class="prereq-box">
+              <h4> Regras de Financiamento - Obra (Cartilha CAIXA)</h4>
+              <ul>
+                <li>Percentual financiado: ate 80% do valor total da obra</li>
+                <li>Prazo de construcao: 2 a 24 meses (SBPE/FGTS); reforma: 1 a 6 meses</li>
+                <li>Prorrogaao excepcional: ate 30 meses (SBPE) ou 36 meses (FGTS)</li>
+                <li>Ultima parcela: minimo 5% do valor bloqueado (construcao) ou 20% (reforma SBPE)</li>
+                <li>Prazo de amortizacao: 60 a 420 meses (varia com modalidade e idade)</li>
+                <li>Limite: prazo de obra + amortizacao + idade do proponente mais idoso <= 80 anos e 6 meses</li>
+                <li>Sistemas de amortizacao: SAC ou SFA/Tabela Price</li>
+                <li>Averbacao de construcao obrigatoria para liberacao da ultima parcela</li>
+                <li>Cadastro no CNO (Cadastro Nacional de Obras) obrigatorio em ate 30 dias do inicio</li>
+              </ul>
+            </div>
+            <div class="prereq-box">
+              <h4> Responsavel Tcnico e Projeto</h4>
+              <ul>
+                <li>Obra deve ter RT com inscricao no CREA, CAU ou CFT/CRT</li>
+                <li>Apresentar ART (engenheiro), RRT (arquiteto) ou TRT (tcnico em edificaoes)</li>
+                <li>Projeto Legal aprovado pela Prefeitura  obrigatorio (exceto reforma SBPE)</li>
+                <li>Troca de RT so em casos excepcionais; comunicar a CAIXA com documentaao</li>
+                <li>Sistemas construtivos inovadores exigem DATec valido (SINAT/PBQP-H)</li>
+                <li>Adesivo de identificacao da CAIXA obrigatorio em obra visivel</li>
+                <li>Alteracoes de projeto so apos aceitaao formal da CAIXA</li>
+                <li>Repactuaao de prazo: apresentar proposta + relatorio fotografico (min. 6 fotos)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: Checklist Documentacao -->
+      <div id="tabChecklist" style="display:none;">
+        <div class="admin-card">
+          <h3> Checklist de Checklist de Documentacao MCMV (Fonte: CAIXA)</h3>
+          <div class="alert-box">
+            <strong> Como usar</strong>
+            Marque os documentos ja obtidos para cada etapa do processo. Dados salvos localmente no navegador.
+          </div>
+          <div class="checklist-tabs">
+            <div class="checklist-tab active" onclick="showChecklistTab('pessoal', this)"> Pessoal</div>
+            <div class="checklist-tab" onclick="showChecklistTab('obra', this)"> Obra / Projeto</div>
+            <div class="checklist-tab" onclick="showChecklistTab('imovel', this)"> Imovel</div>
+            <div class="checklist-tab" onclick="showChecklistTab('faixa1', this)"> Faixa 1</div>
+          </div>
+
+          <div id="chk-pessoal">
+            <ul class="checklist-list" id="chkList-pessoal">
+              <li><input type="checkbox" id="c1" onchange="saveChecklist()"><label for="c1">Carteira de identidade (RG) ou documento oficial com foto e filiaao</label></li>
+              <li><input type="checkbox" id="c2" onchange="saveChecklist()"><label for="c2">CPF (Cadastro de Pessoa Fisica) ou documento que contenha o CPF</label></li>
+              <li><input type="checkbox" id="c3" onchange="saveChecklist()"><label for="c3">Comprovante de estado civil (certidao de nascimento, casamento, divorcio ou obito do conjuge)</label></li>
+              <li><input type="checkbox" id="c4" onchange="saveChecklist()"><label for="c4">Declaracao de Uniao Estavel (modelo CAIXA), se aplicavel</label></li>
+              <li><input type="checkbox" id="c5" onchange="saveChecklist()"><label for="c5">Comprovante de residencia atualizado</label></li>
+              <li><input type="checkbox" id="c6" onchange="saveChecklist()"><label for="c6">Comprovante de renda (ultimos 6 meses: holerite, IR, extrato ou recibo)</label></li>
+              <li><input type="checkbox" id="c7" onchange="saveChecklist()"><label for="c7">Identidade de estrangeiro + visto permanente (se aplicavel)</label></li>
+              <li><input type="checkbox" id="c8" onchange="saveChecklist()"><label for="c8">Procuraao por instrumento publico (se analfabeto ou impossibilitado de assinar)</label></li>
+              <li><input type="checkbox" id="c9" onchange="saveChecklist()"><label for="c9">Laudo/atestado mdico com espcie e CID (se deficiente)</label></li>
+              <li><input type="checkbox" id="c10" onchange="saveChecklist()"><label for="c10">Sentena judicial de interdiao com curador (se declarado incapaz maior de 18 anos)</label></li>
+            </ul>
+          </div>
+
+          <div id="chk-obra" style="display:none;">
+            <ul class="checklist-list" id="chkList-obra">
+              <li><input type="checkbox" id="o1" onchange="saveChecklist()"><label for="o1">PCI (Proposta de Construao Individual CAIXA) - preenchida e assinada pelo cliente e RT</label></li>
+              <li><input type="checkbox" id="o2" onchange="saveChecklist()"><label for="o2">PRM (Proposta de Reforma e Melhoria) - se reforma, preenchida e assinada</label></li>
+              <li><input type="checkbox" id="o3" onchange="saveChecklist()"><label for="o3">Projeto Legal aprovado pela Prefeitura (PDF)</label></li>
+              <li><input type="checkbox" id="o4" onchange="saveChecklist()"><label for="o4">ART/RRT/TRT do projeto legal (estrutural, eltrico, hidrossanitario, impermeabilizaao)</label></li>
+              <li><input type="checkbox" id="o5" onchange="saveChecklist()"><label for="o5">ART/RRT/TRT de execuao de obra (contendo atividade: construcao civil / edificaao)</label></li>
+              <li><input type="checkbox" id="o6" onchange="saveChecklist()"><label for="o6">Alvara ou Licena de Construao (obrigatorio para liberacao de parcelas)</label></li>
+              <li><input type="checkbox" id="o7" onchange="saveChecklist()"><label for="o7">Cadastro no CNO (Cadastro Nacional de Obras - gov.br) - prazo: 30 dias do inicio</label></li>
+              <li><input type="checkbox" id="o8" onchange="saveChecklist()"><label for="o8">PLS (Planilha de Levantamento de Servios) assinada pelo cliente e RT - a cada parcela</label></li>
+              <li><input type="checkbox" id="o9" onchange="saveChecklist()"><label for="o9">Adesivo de identificacao da CAIXA afixado em local visivel na obra</label></li>
+              <li><input type="checkbox" id="o10" onchange="saveChecklist()"><label for="o10">DATec valido (se sistema construtivo inovador - SINAT/PBQP-H)</label></li>
+              <li><input type="checkbox" id="o11" onchange="saveChecklist()"><label for="o11">Proposta de Alteraao de Projeto/Especificaao (se houver alteraao durante a obra)</label></li>
+              <li><input type="checkbox" id="o12" onchange="saveChecklist()"><label for="o12">Habite-se (ou documento equivalente da Prefeitura) - obrigatorio para averbaao</label></li>
+              <li><input type="checkbox" id="o13" onchange="saveChecklist()"><label for="o13">CND (Certidao Negativa de Dbitos - Receita Federal/INSS) - obrigatorio para averbaao</label></li>
+              <li><input type="checkbox" id="o14" onchange="saveChecklist()"><label for="o14">Averbacao da construcao na matricula do imovel (cartorio) - para liberar ultima parcela</label></li>
+            </ul>
+          </div>
+
+          <div id="chk-imovel" style="display:none;">
+            <ul class="checklist-list" id="chkList-imovel">
+              <li><input type="checkbox" id="i1" onchange="saveChecklist()"><label for="i1">Certidao de inteiro teor da matricula do imovel - atualizada, individualizada, com onus reais</label></li>
+              <li><input type="checkbox" id="i2" onchange="saveChecklist()"><label for="i2">Matricula atualizada apos averbaao da construcao - para liberacao da ultima parcela</label></li>
+              <li><input type="checkbox" id="i3" onchange="saveChecklist()"><label for="i3">Documentos do vendedor (se aquisiao de terreno + construcao)</label></li>
+              <li><input type="checkbox" id="i4" onchange="saveChecklist()"><label for="i4">Planta e memorial descritivo (se necessario para analise tcnica)</label></li>
+            </ul>
+          </div>
+
+          <div id="chk-faixa1" style="display:none;">
+            <ul class="checklist-list" id="chkList-faixa1">
+              <li><input type="checkbox" id="f1" onchange="saveChecklist()"><label for="f1">Comprovaao de renda ate R$ 2.850/mes (ou R$ 40.000/ano rural)</label></li>
+              <li><input type="checkbox" id="f2" onchange="saveChecklist()"><label for="f2">Declaracao de que nenhum membro possui imovel residencial</label></li>
+              <li><input type="checkbox" id="f3" onchange="saveChecklist()"><label for="f3">Declaracao de Beneficiario no PMCMV - Renda Familiar ate R$ 1.600 (Recursos do FAR) - modelo CAIXA</label></li>
+              <li><input type="checkbox" id="f4" onchange="saveChecklist()"><label for="f4">Declaracao de nao recebimento de beneficio habitacional anterior (recursos oramentarios da Uniao)</label></li>
+              <li><input type="checkbox" id="f5" onchange="saveChecklist()"><label for="f5">Certidao confirmando ausencia no SIACI/CADMUT</label></li>
+              <li><input type="checkbox" id="f6" onchange="saveChecklist()"><label for="f6">Certidao confirmando ausencia no CADIN</label></li>
+              <li><input type="checkbox" id="f7" onchange="saveChecklist()"><label for="f7">Documentos organizados em pastas individualizadas (modelo CAIXA) para cada familia</label></li>
+              <li><input type="checkbox" id="f8" onchange="saveChecklist()"><label for="f8">Comprovante de cadastro no CadUnico (se beneficiario Bolsa Familia/BPC)</label></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: Faixas de Renda (Editavel) -->
+      <div id="tabFaixas" style="display:none;">
+        <div class="admin-card">
+          <h3> Configuraao das Faixas de Renda MCMV</h3>
+          <div class="alert-box">
+            <strong> Como usar</strong>
+            Edite o valor maximo de cada faixa conforme as regras vigentes do governo. Os minimos sao calculados automaticamente. Clique em <strong>Salvar Faixas</strong> para aplicar imediatamente (a classificaao dos cadastros passa a usar os novos limites).
+          </div>
+          <div class="faixas-config-grid">
+            <div class="faixa-config-card f1">
+              <h4> Faixa 1</h4>
+              <div class="faixa-range-display">
+                <span class="faixa-range-min" id="faixa1_min_display">De: R$ 0,00</span>
+                <span>-> At:</span>
+              </div>
+              <div class="faixa-input-group">
+                <span class="faixa-currency">R$</span>
+                <input type="text" id="faixa1_max" placeholder="3.200,00" oninput="onFaixaMaxChange()" />
+              </div>
+            </div>
+            <div class="faixa-config-card f2">
+              <h4> Faixa 2</h4>
+              <div class="faixa-range-display">
+                <span class="faixa-range-min" id="faixa2_min_display">De: automatico</span>
+                <span>-> At:</span>
+              </div>
+              <div class="faixa-input-group">
+                <span class="faixa-currency">R$</span>
+                <input type="text" id="faixa2_max" placeholder="5.000,00" oninput="onFaixaMaxChange()" />
+              </div>
+            </div>
+            <div class="faixa-config-card f3">
+              <h4> Faixa 3</h4>
+              <div class="faixa-range-display">
+                <span class="faixa-range-min" id="faixa3_min_display">De: automatico</span>
+                <span>-> At:</span>
+              </div>
+              <div class="faixa-input-group">
+                <span class="faixa-currency">R$</span>
+                <input type="text" id="faixa3_max" placeholder="9.600,00" oninput="onFaixaMaxChange()" />
+              </div>
+            </div>
+            <div class="faixa-config-card f4">
+              <h4> Faixa 4</h4>
+              <div class="faixa-range-display">
+                <span class="faixa-range-min" id="faixa4_min_display">De: automatico</span>
+                <span>-> At:</span>
+              </div>
+              <div class="faixa-input-group">
+                <span class="faixa-currency">R$</span>
+                <input type="text" id="faixa4_max" placeholder="13.000,00" oninput="onFaixaMaxChange()" />
+              </div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:4px;">
+            <button class="save-faixas-btn" onclick="saveFaixasConfig()"> Salvar Faixas</button>
+            <button class="reset-faixas-btn" onclick="resetFaixasConfig()"> Restaurar Padrao</button>
+            <span id="faixasSaveMsg" style="display:none; color:#2e7d32; font-weight:700; font-size:14px;"></span>
+          </div>
+          <div style="margin-top:24px; background:#F8F4FF; border-radius:10px; padding:16px;">
+            <p style="font-size:11px; color:#666; margin:0 0 12px; font-family:var(--font-alt); font-weight:800; text-transform:uppercase; letter-spacing:0.5px;"> Faixas Vigentes no Sistema</p>
+            <div id="faixasPreview" style="display:flex; gap:10px; flex-wrap:wrap;"></div>
+          </div>
+
+          <div style="margin-top:16px; background:#FFF8E1; border-radius:10px; padding:16px; border:1px solid #FFE0B2;">
+            <p style="font-size:11px; color:#666; margin:0 0 10px; font-family:var(--font-alt); font-weight:800; text-transform:uppercase; letter-spacing:0.5px;"> Limites de valor do imovel (editavel)</p>
+            <div class="imovel-limites-grid">
+              <div class="field">
+                <label for="limite_faixa12_min">Faixas 1 e 2 - valor minimo</label>
+                <input type="text" id="limite_faixa12_min" placeholder="210.000,00" />
+              </div>
+              <div class="field">
+                <label for="limite_faixa12_acima750">Faixas 1 e 2 - max. cidade acima 750 mil</label>
+                <input type="text" id="limite_faixa12_acima750" placeholder="275.000,00" />
+              </div>
+              <div class="field">
+                <label for="limite_faixa12_300_750">Faixas 1 e 2 - max. cidade 300 a 750 mil</label>
+                <input type="text" id="limite_faixa12_300_750" placeholder="270.000,00" />
+              </div>
+              <div class="field">
+                <label for="limite_faixa12_100_300">Faixas 1 e 2 - max. cidade 100 a 300 mil</label>
+                <input type="text" id="limite_faixa12_100_300" placeholder="245.000,00" />
+              </div>
+              <div class="field">
+                <label for="limite_faixa3_max">Faixa 3 - valor maximo</label>
+                <input type="text" id="limite_faixa3_max" placeholder="400.000,00" />
+              </div>
+              <div class="field">
+                <label for="limite_faixa4_max">Faixa 4 - valor maximo</label>
+                <input type="text" id="limite_faixa4_max" placeholder="600.000,00" />
+              </div>
+            </div>
+            <div id="imovelLimitesPreview" style="margin-top:12px; font-size:13px; color:#5d4037;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: Modulo Administracao -->
+      <div id="tabAdmin" style="display:none;">
+        <div class="admin-card">
+          <h3> Modulo Administracao (CRM)</h3>
+          <p class="mcmv-note">Fluxo base: Cadastro de grupos -> Permissao de acesso -> Cadastro de usuarios.</p>
+
+          <div class="admin-module-grid">
+            <div>
+              <p class="admin-subtitle">3.1.1 Cadastro de grupos e permissoes</p>
+
+              <div class="admin-form-grid">
+                <input id="groupName" type="text" placeholder="Nome do grupo" />
+                <input id="groupDesc" type="text" placeholder="Descriao do grupo" />
+              </div>
+              <div class="admin-actions">
+                <button class="admin-btn primary" onclick="saveGroup()">Salvar grupo</button>
+                <button class="admin-btn secondary" onclick="resetGroupForm()">Limpar</button>
+              </div>
+              <p id="groupStatus" class="admin-status"></p>
+
+              <table class="admin-mini-table">
+                <thead>
+                  <tr><th>Grupo</th><th>Descriao</th><th>Aoes</th></tr>
+                </thead>
+                <tbody id="groupsTableBody"></tbody>
+              </table>
+
+              <div style="margin-top:12px; border:1px solid #ececf2; border-radius:10px; padding:10px;">
+                <p class="admin-subtitle">3.1.2 Permissao de acesso</p>
+                <p style="font-size:12px; color:#666; margin-bottom:8px;">Grupo selecionado: <strong id="selectedGroupLabel">Nenhum</strong></p>
+                <div id="permissionsContainer" class="perm-grid"></div>
+                <div class="admin-actions" style="margin-top:10px;">
+                  <button class="admin-btn primary" onclick="saveGroupPermissions()">Salvar permissoes</button>
+                </div>
+                <p id="permStatus" class="admin-status"></p>
+              </div>
+            </div>
+
+            <div>
+              <p class="admin-subtitle">3.1.3 Cadastro de usuarios</p>
+              <div class="admin-form-grid">
+                <input id="userName" type="text" placeholder="Nome do usuario" />
+                <input id="userLogin" type="text" placeholder="Login" />
+                <input id="userPassword" type="password" placeholder="Senha" />
+                <input id="userPasswordConfirm" type="password" placeholder="Repetir senha" />
+                <input id="userEmail" class="full" type="email" placeholder="E-mail" />
+                <select id="userActive">
+                  <option value="sim">Ativo: Sim</option>
+                  <option value="nao">Ativo: Nao</option>
+                </select>
+                <select id="userRestrictCost" onchange="toggleCostCenters()">
+                  <option value="nao">Restriao de centro de custo: Nao</option>
+                  <option value="sim">Restriao de centro de custo: Sim</option>
+                </select>
+              </div>
+
+              <div style="margin-bottom:10px; border:1px solid #ececf2; border-radius:10px; padding:10px;">
+                <p style="font-size:12px; color:#666; font-family:var(--font-alt); font-weight:800; text-transform:uppercase; margin-bottom:6px;">Grupos do usuario</p>
+                <div id="userGroupsContainer" class="perm-grid"></div>
+              </div>
+
+              <div id="costCenterWrap" style="display:none; margin-bottom:10px; border:1px solid #ececf2; border-radius:10px; padding:10px;">
+                <p style="font-size:12px; color:#666; font-family:var(--font-alt); font-weight:800; text-transform:uppercase; margin-bottom:6px;">Centros de custo</p>
+                <div id="costCenterContainer" class="cc-grid"></div>
+              </div>
+
+              <div class="admin-actions">
+                <button class="admin-btn primary" onclick="saveUser()">Salvar usuario</button>
+                <button class="admin-btn secondary" onclick="resetUserForm()">Limpar</button>
+              </div>
+              <p id="userStatus" class="admin-status"></p>
+
+              <table class="admin-mini-table">
+                <thead>
+                  <tr><th>Nome</th><th>Login</th><th>E-mail</th><th>Aoes</th></tr>
+                </thead>
+                <tbody id="usersTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      </div>
+
     </div>
   </div>
 
   <script>
-    // ========== DADOS BASE ==========
-    const BASE_UNITS = [
-      { id: '101', floor: 1, area: 30.94, status: 'disponivel' },
-      { id: '102', floor: 1, area: 30.94, status: 'disponivel' },
-      { id: '201', floor: 2, area: 30.94, status: 'reservado' },
-      { id: '202', floor: 2, area: 30.94, status: 'reservado' },
-      { id: '203', floor: 2, area: 35.73, status: 'disponivel' },
-      { id: '204', floor: 2, area: 30.94, status: 'reservado' },
-      { id: '301', floor: 3, area: 30.94, status: 'vendido' },
-      { id: '302', floor: 3, area: 30.94, status: 'vendido' },
-      { id: '303', floor: 3, area: 35.73, status: 'disponivel' },
-      { id: '304', floor: 3, area: 30.94, status: 'vendido' },
-      { id: '401', floor: 4, area: 30.94, status: 'disponivel' },
-      { id: '402', floor: 4, area: 30.94, status: 'vendido' },
-      { id: '403', floor: 4, area: 35.73, status: 'disponivel' },
-      { id: '404', floor: 4, area: 30.94, status: 'vendido' },
-      { id: '501', floor: 5, area: 30.94, status: 'disponivel' },
-      { id: '502', floor: 5, area: 30.94, status: 'disponivel' },
-      { id: '503', floor: 5, area: 35.73, status: 'disponivel' },
-      { id: '504', floor: 5, area: 30.94, status: 'disponivel' },
-      { id: '601', floor: 6, area: 30.94, status: 'vendido' },
-      { id: '602', floor: 6, area: 30.94, status: 'vendido' },
-      { id: '603', floor: 6, area: 35.73, status: 'vendido' },
-      { id: '604', floor: 6, area: 30.94, status: 'vendido' },
-      { id: '701', floor: 7, area: 30.94, status: 'vendido' },
-      { id: '702', floor: 7, area: 30.94, status: 'vendido' },
-      { id: '703', floor: 7, area: 35.73, status: 'vendido' },
-      { id: '704', floor: 7, area: 30.94, status: 'vendido' },
-      { id: '801', floor: 8, area: 30.94, status: 'vendido' },
-      { id: '802', floor: 8, area: 30.94, status: 'disponivel' },
-      { id: '803', floor: 8, area: 35.73, status: 'vendido' },
-      { id: '804', floor: 8, area: 30.94, status: 'reservado' },
-      { id: '901', floor: 9, area: 30.94, status: 'disponivel' },
-      { id: '902', floor: 9, area: 30.94, status: 'disponivel' },
-      { id: '903', floor: 9, area: 35.73, status: 'vendido' },
-      { id: '904', floor: 9, area: 30.94, status: 'disponivel' },
-      { id: '1001', floor: 10, area: 30.94, status: 'disponivel' },
-      { id: '1002', floor: 10, area: 30.94, status: 'disponivel' },
-      { id: '1003', floor: 10, area: 35.73, status: 'vendido' },
-      { id: '1004', floor: 10, area: 30.94, status: 'reservado' },
-      { id: '1101', floor: 11, area: 30.94, status: 'disponivel' },
-      { id: '1102', floor: 11, area: 30.94, status: 'disponivel' },
-      { id: '1103', floor: 11, area: 35.73, status: 'vendido' },
-      { id: '1104', floor: 11, area: 30.94, status: 'disponivel' },
+    // ========== DADOS BASE (MCMV - CONFIGURAVEL) ==========
+    // Ajuste esta configuraao para refletir o empreendimento real.
+    const EMPREENDIMENTO_CONFIG = {
+      nome: 'Residencial MCMV Base',
+      blocos: ['A', 'B'],
+      andares: 5,
+      // Tipologias por andar (na ordem dos apartamentos)
+      tipologias: [
+        { sufixo: '01', area: 42.5, statusInicial: 'disponivel' },
+        { sufixo: '02', area: 42.5, statusInicial: 'disponivel' },
+        { sufixo: '03', area: 46.8, statusInicial: 'reservado' },
+        { sufixo: '04', area: 46.8, statusInicial: 'disponivel' }
+      ]
+    };
+
+    function buildBaseUnitsFromConfig(config) {
+      const units = [];
+      config.blocos.forEach(bloco => {
+        for (let andar = 1; andar <= config.andares; andar++) {
+          config.tipologias.forEach(t => {
+            units.push({
+              id: `${bloco}${andar}${t.sufixo}`,
+              block: bloco,
+              floor: andar,
+              area: t.area,
+              status: t.statusInicial || 'disponivel'
+            });
+          });
+        }
+      });
+      return units;
+    }
+
+    const BASE_UNITS = buildBaseUnitsFromConfig(EMPREENDIMENTO_CONFIG);
+
+    // ========== CONFIGURACAO SEGURA (SEM DOMINIO) ==========
+    const LOCAL_ONLY_MODE = true; // true = nunca envia/consulta dados em API remota
+    const API_BASE_URL = ''; // deixe vazio para evitar uso acidental de dominio
+    const ADMIN_CREDENTIALS = {
+      email: 'redemultiplace424@gmail.com',
+      password: '123456'
+    };
+    const STORAGE_KEYS = {
+      units: 'mcmv_units_overrides',
+      waitlist: 'mcmv_waitlist',
+      imovelLimites: 'mcmv_imovel_limites',
+      adminGroups: 'mcmv_admin_groups',
+      adminUsers: 'mcmv_admin_users',
+      kanbanLeads: 'mcmv_kanban_leads'
+    };
+
+    const ADMIN_MODULES = [
+      'Home', 'Cadastros', 'Comercial', 'Auditoria', 'Qualidade', 'Compras',
+      'Controle de Documentos', 'Equipe de Medioes', 'Maquinas e Equipamentos',
+      'Terceirizaao', 'Administracao'
     ];
+
+    const COST_CENTERS = ['ADV', 'ASSCOM', 'CFRH', 'CJUR', 'CLOG', 'CRS', 'DIRAD'];
+
+    let editingGroupId = null;
+    let editingUserId = null;
+    let selectedGroupIdForPerm = null;
+
+    // ========== CALIBRACAO COMERCIAL (AJUSTE RAPIDO) ==========
+    const MCMV_CALIBRACAO = {
+      // Regioes aceitas: norte-nordeste | sul-sudeste-centro-oeste
+      regiao: 'sul-sudeste-centro-oeste',
+      // Simulaao simples de uso de FGTS: desconto percentual no valor financiado
+      fgtsReducaoPercentual: 0.10,
+      // Limite de valor de imovel na Faixa 4 (referencia informativa)
+      faixa4ValorImovelMax: 600000.00
+    };
+
+    const IMOVEL_LIMITES_DEFAULT = {
+      faixa12PorPorte: {
+        acima750: { label: 'Cidades acima de 750 mil hab.', min: 210000.00, max: 275000.00 },
+        de300a750: { label: 'Cidades entre 300 mil e 750 mil hab.', min: 210000.00, max: 270000.00 },
+        de100a300: { label: 'Cidades entre 100 mil e 300 mil hab.', min: 210000.00, max: 245000.00 }
+      },
+      faixa3Max: 400000.00,
+      faixa4Max: 600000.00
+    };
+
+    const MCMV_RULES = {
+      urbana: [
+        { faixa: 'Faixa 1', min: 0,        max: 3200.00 },
+        { faixa: 'Faixa 2', min: 3200.01,   max: 5000.00 },
+        { faixa: 'Faixa 3', min: 5000.01,   max: 9600.00 },
+        { faixa: 'Faixa 4', min: 9600.01,   max: 13000.00 }
+      ],
+      ruralAnualLimite: 150000.00,
+      subsidioMaximo: 55000.00,
+      subsidioPorFaixa: {
+        // Regra calibravel de simulacao
+        'Faixa 1': [
+          { rendaAte: 1900.00, percentual: 0.95, teto: 55000.00 },
+          { rendaAte: 3200.00, percentual: 0.70, teto: 45000.00 }
+        ],
+        'Faixa 2': [
+          { rendaAte: 4700.00, percentual: 0.35, teto: 35000.00 }
+        ],
+        'Faixa 3': [
+          { rendaAte: 8600.00, percentual: 0.12, teto: 12000.00 }
+        ],
+        'Faixa 4': []
+      },
+      jurosAnualPorFaixaRegiao: {
+        'Faixa 1': {
+          'norte-nordeste': 4.00,
+          'sul-sudeste-centro-oeste': 4.25
+        },
+        'Faixa 2': {
+          'norte-nordeste': 4.75,
+          'sul-sudeste-centro-oeste': 7.00
+        },
+        'Faixa 3': {
+          'norte-nordeste': 7.66,
+          'sul-sudeste-centro-oeste': 8.16
+        },
+        'Faixa 4': {
+          'norte-nordeste': 10.50,
+          'sul-sudeste-centro-oeste': 10.50
+        }
+      },
+      etapas: ['cadastro', 'analise', 'documentacao', 'aprovacao', 'contrato']
+    };
 
     let adminToken = '';
     let currentUnits = [];
 
+    function buildApiUrl(path) {
+      return `${API_BASE_URL}${path}`;
+    }
+
+    function parseCurrencyBRL(input) {
+      const clean = String(input || '').replace(/\./g, '').replace(',', '.').replace(/[^0-9.]/g, '');
+      return Number(clean || 0);
+    }
+
+    function classifyMcmvByIncome(monthlyIncome, areaType) {
+      if (areaType === 'rural') {
+        const annual = monthlyIncome * 12;
+        if (annual <= 40000) return { faixa: 'Faixa 1', elegivel: true };
+        if (annual <= 66000) return { faixa: 'Faixa 2', elegivel: true };
+        if (annual <= 120000) return { faixa: 'Faixa 3', elegivel: true };
+        if (annual <= MCMV_RULES.ruralAnualLimite) return { faixa: 'Faixa 4', elegivel: true };
+        return { faixa: 'Fora da regra', elegivel: false };
+      }
+
+      for (const rule of getFaixasConfig()) {
+        if (monthlyIncome >= rule.min && monthlyIncome <= rule.max) {
+          return { faixa: rule.faixa, elegivel: true };
+        }
+      }
+      return { faixa: 'Fora da regra', elegivel: false };
+    }
+
+    function getImovelLimitesConfig() {
+      const raw = localStorage.getItem(STORAGE_KEYS.imovelLimites);
+      if (raw) {
+        try { return JSON.parse(raw); } catch(e) {}
+      }
+      return JSON.parse(JSON.stringify(IMOVEL_LIMITES_DEFAULT));
+    }
+
+    function getLimiteImovelPorFaixa(faixa, porteCidade) {
+      const cfg = getImovelLimitesConfig();
+      if (faixa === 'Faixa 1' || faixa === 'Faixa 2') {
+        const porte = cfg.faixa12PorPorte[porteCidade] || cfg.faixa12PorPorte.acima750;
+        return { min: porte.min, max: porte.max, descricao: `${faixa} (${porte.label})` };
+      }
+      if (faixa === 'Faixa 3') {
+        return { min: 0, max: cfg.faixa3Max, descricao: 'Faixa 3' };
+      }
+      if (faixa === 'Faixa 4') {
+        return { min: 0, max: cfg.faixa4Max, descricao: 'Faixa 4' };
+      }
+      return null;
+    }
+
+    function faixaBadgeClass(faixa) {
+      if (faixa === 'Faixa 1') return 'faixa1';
+      if (faixa === 'Faixa 2') return 'faixa2';
+      if (faixa === 'Faixa 3') return 'faixa3';
+      if (faixa === 'Faixa 4') return 'faixa4';
+      return 'invalida';
+    }
+
+    function getChecklistText(faixa) {
+      const base = 'RG/CPF  Estado civil  Comprovante de residencia  Comprovante de renda (6 meses)  Matricula do imovel atualizada';
+      const extra = {
+        'Faixa 1': '  Declaracao PMCMV (modelo CAIXA)  Ausencia em SIACI/CADMUT/CADIN  Sem imovel anterior',
+        'Faixa 2': '  PCI/PRM assinada  ART/RRT/TRT  Projeto Legal aprovado  Alvara de construcao',
+        'Faixa 3': '  PCI/PRM assinada  ART/RRT/TRT  Projeto Legal aprovado  Alvara de construcao',
+        'Faixa 4': '  PCI/PRM assinada  ART/RRT/TRT  Projeto Legal aprovado  Alvara  Imovel ate R$ 500.000'
+      };
+      return base + (extra[faixa] || '');
+    }
+
+    function getAnnualRateByFaixa(faixa) {
+      const tabela = MCMV_RULES.jurosAnualPorFaixaRegiao[faixa];
+      if (!tabela) return 10.50;
+      return tabela[MCMV_CALIBRACAO.regiao] || 10.50;
+    }
+
+    function estimateSubsidy(faixa, renda, valorImovel) {
+      if (!valorImovel || valorImovel <= 0) return 0;
+      const regras = MCMV_RULES.subsidioPorFaixa[faixa] || [];
+      for (const regra of regras) {
+        if (renda <= regra.rendaAte) {
+          const teto = Math.min(MCMV_RULES.subsidioMaximo, regra.teto || MCMV_RULES.subsidioMaximo);
+          return Math.min(teto, valorImovel * regra.percentual);
+        }
+      }
+      return 0;
+    }
+
+    function estimateInstallment(financedValue, annualRate, months) {
+      if (!financedValue || financedValue <= 0) return 0;
+      const n = Math.max(1, Number(months) || 360);
+      const i = (annualRate / 100) / 12;
+      if (i === 0) return financedValue / n;
+      return financedValue * (i / (1 - Math.pow(1 + i, -n)));
+    }
+
+    function getInitialStage(elegivel) {
+      return elegivel ? 'analise' : 'cadastro';
+    }
+
+    function etapaBadgeClass(etapa) {
+      if (etapa === 'cadastro') return 'etapa-cadastro';
+      if (etapa === 'analise') return 'etapa-analise';
+      if (etapa === 'documentacao') return 'etapa-documentacao';
+      if (etapa === 'aprovacao') return 'etapa-aprovacao';
+      if (etapa === 'contrato') return 'etapa-contrato';
+      return 'invalida';
+    }
+
+    function formatMoney(value) {
+      return Number(value || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    // ========== FAIXAS DE RENDA (EDITAVEIS) ==========
+    const FAIXAS_DEFAULTS = [
+      { faixa: 'Faixa 1', min: 0,        max: 3200.00 },
+      { faixa: 'Faixa 2', min: 3200.01,   max: 5000.00 },
+      { faixa: 'Faixa 3', min: 5000.01,   max: 9600.00 },
+      { faixa: 'Faixa 4', min: 9600.01,   max: 13000.00 }
+    ];
+
+    function getFaixasConfig() {
+      const raw = localStorage.getItem('mcmv_faixas_config');
+      if (raw) { try { return JSON.parse(raw); } catch(e) {} }
+      return FAIXAS_DEFAULTS.map(f => ({...f}));
+    }
+
+    function loadFaixasForm() {
+      const faixas = getFaixasConfig();
+      faixas.forEach((f, i) => {
+        const el = document.getElementById('faixa' + (i + 1) + '_max');
+        if (el) el.value = f.max.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+      });
+      const imovelCfg = getImovelLimitesConfig();
+      const f12 = imovelCfg.faixa12PorPorte;
+      document.getElementById('limite_faixa12_min').value = (f12.acima750.min || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+      document.getElementById('limite_faixa12_acima750').value = (f12.acima750.max || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+      document.getElementById('limite_faixa12_300_750').value = (f12.de300a750.max || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+      document.getElementById('limite_faixa12_100_300').value = (f12.de100a300.max || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+      document.getElementById('limite_faixa3_max').value = (imovelCfg.faixa3Max || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+      document.getElementById('limite_faixa4_max').value = (imovelCfg.faixa4Max || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+      onFaixaMaxChange();
+      renderFaixasPreview(faixas);
+      renderImovelLimitesPreview(imovelCfg);
+    }
+
+    function onFaixaMaxChange() {
+      const maxes = [1, 2, 3, 4].map(i => parseCurrencyBRL(document.getElementById('faixa' + i + '_max').value));
+      document.getElementById('faixa1_min_display').textContent = 'De: R$ 0,00';
+      document.getElementById('faixa2_min_display').textContent = 'De: ' + (maxes[0] ? formatMoney(maxes[0] + 0.01) : '-');
+      document.getElementById('faixa3_min_display').textContent = 'De: ' + (maxes[1] ? formatMoney(maxes[1] + 0.01) : '-');
+      document.getElementById('faixa4_min_display').textContent = 'De: ' + (maxes[2] ? formatMoney(maxes[2] + 0.01) : '-');
+    }
+
+    function saveFaixasConfig() {
+      const maxes = [1, 2, 3, 4].map(i => parseCurrencyBRL(document.getElementById('faixa' + i + '_max').value));
+      if (maxes.some(v => !v || v <= 0)) {
+        alert('Preencha todos os valores maximos corretamente.');
+        return;
+      }
+      if (maxes[0] >= maxes[1] || maxes[1] >= maxes[2] || maxes[2] >= maxes[3]) {
+        alert('Os valores devem ser crescentes:\nFaixa 1 < Faixa 2 < Faixa 3 < Faixa 4.');
+        return;
+      }
+      const faixas = [
+        { faixa: 'Faixa 1', min: 0,               max: maxes[0] },
+        { faixa: 'Faixa 2', min: maxes[0] + 0.01,  max: maxes[1] },
+        { faixa: 'Faixa 3', min: maxes[1] + 0.01,  max: maxes[2] },
+        { faixa: 'Faixa 4', min: maxes[2] + 0.01,  max: maxes[3] }
+      ];
+
+      const faixa12Min = parseCurrencyBRL(document.getElementById('limite_faixa12_min').value);
+      const faixa12MaxAcima750 = parseCurrencyBRL(document.getElementById('limite_faixa12_acima750').value);
+      const faixa12Max300a750 = parseCurrencyBRL(document.getElementById('limite_faixa12_300_750').value);
+      const faixa12Max100a300 = parseCurrencyBRL(document.getElementById('limite_faixa12_100_300').value);
+      const faixa3Max = parseCurrencyBRL(document.getElementById('limite_faixa3_max').value);
+      const faixa4Max = parseCurrencyBRL(document.getElementById('limite_faixa4_max').value);
+
+      if (!faixa12Min || !faixa12MaxAcima750 || !faixa12Max300a750 || !faixa12Max100a300 || !faixa3Max || !faixa4Max) {
+        alert('Preencha todos os limites de imovel corretamente.');
+        return;
+      }
+      if (faixa12Min > faixa12MaxAcima750 || faixa12Min > faixa12Max300a750 || faixa12Min > faixa12Max100a300) {
+        alert('O minimo das Faixas 1 e 2 nao pode ser maior que os tetos por porte de cidade.');
+        return;
+      }
+
+      const imovelCfg = {
+        faixa12PorPorte: {
+          acima750: { label: 'Cidades acima de 750 mil hab.', min: faixa12Min, max: faixa12MaxAcima750 },
+          de300a750: { label: 'Cidades entre 300 mil e 750 mil hab.', min: faixa12Min, max: faixa12Max300a750 },
+          de100a300: { label: 'Cidades entre 100 mil e 300 mil hab.', min: faixa12Min, max: faixa12Max100a300 }
+        },
+        faixa3Max,
+        faixa4Max
+      };
+
+      localStorage.setItem('mcmv_faixas_config', JSON.stringify(faixas));
+      localStorage.setItem(STORAGE_KEYS.imovelLimites, JSON.stringify(imovelCfg));
+      MCMV_RULES.urbana = faixas;
+      MCMV_CALIBRACAO.faixa4ValorImovelMax = faixa4Max;
+      renderFaixasPreview(faixas);
+      renderImovelLimitesPreview(imovelCfg);
+      const msg = document.getElementById('faixasSaveMsg');
+      msg.textContent = ' Faixas e limites de imovel salvos!';
+      msg.style.display = 'inline';
+      setTimeout(() => msg.style.display = 'none', 3500);
+    }
+
+    function resetFaixasConfig() {
+      if (!confirm('Restaurar os valores padrao das faixas de renda?')) return;
+      localStorage.removeItem('mcmv_faixas_config');
+      localStorage.removeItem(STORAGE_KEYS.imovelLimites);
+      MCMV_RULES.urbana = FAIXAS_DEFAULTS.map(f => ({...f}));
+      MCMV_CALIBRACAO.faixa4ValorImovelMax = IMOVEL_LIMITES_DEFAULT.faixa4Max;
+      loadFaixasForm();
+      const msg = document.getElementById('faixasSaveMsg');
+      msg.textContent = ' Valores de renda e de imovel restaurados para o padrao.';
+      msg.style.display = 'inline';
+      setTimeout(() => msg.style.display = 'none', 3500);
+    }
+
+    function renderFaixasPreview(faixas) {
+      const container = document.getElementById('faixasPreview');
+      if (!container) return;
+      const palette = {
+        'Faixa 1': ['#E8F5E9', '#2E7D32'],
+        'Faixa 2': ['#E3F2FD', '#1565C0'],
+        'Faixa 3': ['#FFF3E0', '#E65100'],
+        'Faixa 4': ['#FCE4EC', '#880E4F']
+      };
+      container.innerHTML = faixas.map(f => {
+        const [bg, color] = palette[f.faixa] || ['#eee', '#333'];
+        return `<span class="faixa-preview-badge" style="background:${bg};color:${color}">${f.faixa}: ${formatMoney(f.min)} -> ${formatMoney(f.max)}</span>`;
+      }).join('');
+    }
+
+    function renderImovelLimitesPreview(cfg) {
+      const el = document.getElementById('imovelLimitesPreview');
+      if (!el) return;
+      el.innerHTML = `
+        <strong>Faixas 1 e 2:</strong> de ${formatMoney(cfg.faixa12PorPorte.acima750.min)} at ${formatMoney(cfg.faixa12PorPorte.acima750.max)} (acima 750 mil),
+        ${formatMoney(cfg.faixa12PorPorte.de300a750.max)} (300 a 750 mil),
+        ${formatMoney(cfg.faixa12PorPorte.de100a300.max)} (100 a 300 mil).<br>
+        <strong>Faixa 3:</strong> at ${formatMoney(cfg.faixa3Max)}  <strong>Faixa 4:</strong> at ${formatMoney(cfg.faixa4Max)}.
+      `;
+    }
+
     // ========== LOGIN ==========
     function doLogin() {
       const email = document.getElementById('loginEmail').value.trim();
-      const password = document.getElementById('loginPassword').value;
-      if (email === 'redemultiplace424@gmail.com' && password === '123456') {
+      const password = document.getElementById('loginPassword').value.trim();
+      const emailNormalizado = email.toLowerCase();
+      const emailPermitido = ADMIN_CREDENTIALS.email.toLowerCase();
+      const emailAlternativo = emailPermitido.replace('@gmail.com', '@gmal.com');
+      if ((emailNormalizado === emailPermitido || emailNormalizado === emailAlternativo) && password === ADMIN_CREDENTIALS.password) {
         adminToken = 'Basic ' + btoa(email + ':' + password);
         sessionStorage.setItem('adminToken', adminToken);
         document.getElementById('loginOverlay').style.display = 'none';
@@ -336,7 +1920,7 @@
       location.reload();
     }
 
-    // Auto-login se já autenticado
+    // Auto-login se ja autenticado
     (function checkSession() {
       const token = sessionStorage.getItem('adminToken');
       if (token) {
@@ -353,14 +1937,42 @@
 
     // ========== CARREGAR DADOS ==========
     async function loadData() {
-      await loadUnits();
+      // Inicializa abertura do submenu Comercial
+      const comercialParent = document.querySelector('[data-group="comercial"]');
+      const comercialSubmenu = document.getElementById('comercial-submenu');
+      if (comercialParent && comercialSubmenu) {
+        comercialParent.classList.add('expanded');
+        comercialSubmenu.style.display = 'flex';
+        console.log('Submenu Comercial aberto automaticamente');
+      }
+      
       loadWaitlist();
+      MCMV_RULES.urbana = getFaixasConfig();
+      MCMV_CALIBRACAO.faixa4ValorImovelMax = getImovelLimitesConfig().faixa4Max;
     }
 
     async function loadUnits() {
       currentUnits = BASE_UNITS.map(u => ({...u}));
+
+      if (LOCAL_ONLY_MODE) {
+        const localOverridesRaw = localStorage.getItem(STORAGE_KEYS.units);
+        if (localOverridesRaw) {
+          try {
+            const localOverrides = JSON.parse(localOverridesRaw);
+            currentUnits.forEach(u => {
+              if (localOverrides[u.id]) u.status = localOverrides[u.id];
+            });
+          } catch (e) {
+            console.warn('Falha ao ler overrides locais:', e);
+          }
+        }
+        renderUnitsGrid();
+        renderStats();
+        return;
+      }
+
       try {
-        const resp = await fetch('/api/units');
+        const resp = await fetch(buildApiUrl('/api/units'));
         if (resp.ok) {
           const overrides = await resp.json();
           if (overrides && Object.keys(overrides).length > 0) {
@@ -370,7 +1982,7 @@
           }
         }
       } catch (e) {
-        console.warn('API não disponível, usando dados base.');
+        console.warn('API nao disponivel, usando dados base.');
       }
       renderUnitsGrid();
       renderStats();
@@ -389,12 +2001,12 @@
         card.innerHTML = `
           <div class="unit-admin-info">
             <h4>Ap. ${unit.id}</h4>
-            <span>${unit.area} m² · ${unit.floor}º Andar</span>
+            <span>${unit.area} m2  ${unit.floor}o Andar</span>
           </div>
           <select onchange="updateUnitStatus('${unit.id}', this.value)">
-            <option value="disponivel" ${unit.status === 'disponivel' ? 'selected' : ''}>✅ Disponível</option>
-            <option value="reservado" ${unit.status === 'reservado' ? 'selected' : ''}>⏳ Reservado</option>
-            <option value="vendido" ${unit.status === 'vendido' ? 'selected' : ''}>❌ Vendido</option>
+            <option value="disponivel" ${unit.status === 'disponivel' ? 'selected' : ''}> Disponivel</option>
+            <option value="reservado" ${unit.status === 'reservado' ? 'selected' : ''}> Reservado</option>
+            <option value="vendido" ${unit.status === 'vendido' ? 'selected' : ''}> Vendido</option>
           </select>
         `;
         grid.appendChild(card);
@@ -426,7 +2038,7 @@
       document.getElementById('statsGrid').innerHTML = `
         <div class="stat-card disponivel">
           <div class="stat-number">${disp}</div>
-          <div class="stat-label">Disponíveis</div>
+          <div class="stat-label">Disponiveis</div>
         </div>
         <div class="stat-card reservado">
           <div class="stat-number">${res}</div>
@@ -448,14 +2060,28 @@
       const btn = document.getElementById('btnSave');
       const status = document.getElementById('saveStatus');
       btn.disabled = true;
-      btn.textContent = '⏳ SALVANDO...';
+      btn.textContent = ' SALVANDO...';
       status.textContent = '';
 
       const overrides = {};
       currentUnits.forEach(u => { overrides[u.id] = u.status; });
 
+      if (LOCAL_ONLY_MODE) {
+        localStorage.setItem(STORAGE_KEYS.units, JSON.stringify(overrides));
+        btn.textContent = ' SALVO LOCALMENTE!';
+        btn.style.background = '#388E3C';
+        status.style.color = '#4CAF50';
+        status.textContent = 'Alteracoes salvas apenas no navegador (modo local seguro).';
+        setTimeout(() => {
+          btn.disabled = false;
+          btn.textContent = ' SALVAR ALTERACOES';
+          btn.style.background = '';
+        }, 3000);
+        return;
+      }
+
       try {
-        const resp = await fetch('/api/units', {
+        const resp = await fetch(buildApiUrl('/api/units'), {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -465,23 +2091,23 @@
         });
 
         if (resp.ok) {
-          btn.textContent = '✅ SALVO COM SUCESSO!';
+          btn.textContent = ' SALVO COM SUCESSO!';
           btn.style.background = '#388E3C';
           status.style.color = '#4CAF50';
-          status.textContent = 'Alterações publicadas! Todos os visitantes já verão as mudanças.';
+          status.textContent = 'Alteracoes publicadas! Todos os visitantes ja verao as mudanas.';
         } else {
           throw new Error('Erro ' + resp.status);
         }
       } catch (e) {
         btn.style.background = '#F44336';
-        btn.textContent = '❌ ERRO AO SALVAR';
+        btn.textContent = ' ERRO AO SALVAR';
         status.style.color = '#F44336';
-        status.textContent = 'Erro ao salvar: ' + e.message + '. Verifique se o KV está configurado.';
+        status.textContent = 'Erro ao salvar: ' + e.message + '. Verifique se o KV esta configurado.';
       }
 
       setTimeout(() => {
         btn.disabled = false;
-        btn.textContent = '💾 SALVAR ALTERAÇÕES';
+        btn.textContent = ' SALVAR ALTERACOES';
         btn.style.background = '';
       }, 3000);
     }
@@ -489,64 +2115,675 @@
     // ========== TABS ==========
     function switchTab(tab, el) {
       document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.admin-subtab').forEach(t => t.classList.remove('active'));
       el.classList.add('active');
-      document.getElementById('tabUnits').style.display = tab === 'units' ? 'block' : 'none';
+      
+      // Se é um subtab, abre o grupo comercial automaticamente
+      if (el.classList.contains('admin-subtab')) {
+        const parent = document.querySelector('[data-group="comercial"]');
+        const submenu = document.getElementById('comercial-submenu');
+        if (parent && submenu && submenu.style.display === 'none') {
+          parent.classList.add('expanded');
+          submenu.style.display = 'flex';
+        }
+      }
+      
       document.getElementById('tabWaitlist').style.display = tab === 'waitlist' ? 'block' : 'none';
+      document.getElementById('tabCrm').style.display = tab === 'crm' ? 'block' : 'none';
+      document.getElementById('tabPrereq').style.display = tab === 'prereq' ? 'block' : 'none';
+      document.getElementById('tabChecklist').style.display = tab === 'checklist' ? 'block' : 'none';
+      document.getElementById('tabFaixas').style.display = tab === 'faixas' ? 'block' : 'none';
+      document.getElementById('tabAdmin').style.display = tab === 'admin' ? 'block' : 'none';
+      updateWorkspaceHeader(tab);
+      console.log('switchTab chamado com tab:', tab);
       if (tab === 'waitlist') loadWaitlist();
+      if (tab === 'crm') {
+        console.log('Chamando loadKanban()');
+        loadKanban();
+      }
+      if (tab === 'checklist') loadChecklist();
+      if (tab === 'faixas') loadFaixasForm();
+      if (tab === 'admin') initAdminModule();
+    }
+
+    function toggleGroup(el) {
+      const groupName = el.dataset.group;
+      const submenu = document.getElementById(groupName + '-submenu');
+      el.classList.toggle('expanded');
+      submenu.style.display = submenu.style.display === 'none' ? 'flex' : 'none';
+    }
+
+    function updateWorkspaceHeader(tab) {
+      const title = document.getElementById('workspaceTitle');
+      const breadcrumb = document.getElementById('workspaceBreadcrumb');
+      const labels = {
+        waitlist: 'Cadastros',
+        crm: 'CRM - Gerenciamento de Leads',
+        prereq: 'Pre-Requisitos MCMV',
+        checklist: 'Checklist de Documentacao',
+        faixas: 'Configuracao de Faixas',
+        admin: 'Administracao de Usuarios'
+      };
+      const current = labels[tab] || 'Cadastros';
+      if (title) title.textContent = current;
+      // Tabs dentro de Comercial
+      const comercialTabs = ['waitlist', 'crm', 'prereq', 'checklist', 'faixas'];
+      if (breadcrumb) {
+        if (comercialTabs.includes(tab)) {
+          breadcrumb.textContent = 'Home > Comercial > ' + current;
+        } else {
+          breadcrumb.textContent = 'Home > Administracao > ' + current;
+        }
+      }
+    }
+
+    function handleNovoCadastro() {
+      const tabEl = document.querySelector('.admin-tab[data-tab="waitlist"]');
+      if (tabEl) switchTab('waitlist', tabEl);
+      const input = document.getElementById('leadNome');
+      if (input) input.focus();
+    }
+
+    function getGroups() {
+      const raw = localStorage.getItem(STORAGE_KEYS.adminGroups);
+      if (!raw) return [];
+      try { return JSON.parse(raw) || []; } catch (e) { return []; }
+    }
+
+    function saveGroups(groups) {
+      localStorage.setItem(STORAGE_KEYS.adminGroups, JSON.stringify(groups));
+    }
+
+    function getUsers() {
+      const raw = localStorage.getItem(STORAGE_KEYS.adminUsers);
+      if (!raw) return [];
+      try { return JSON.parse(raw) || []; } catch (e) { return []; }
+    }
+
+    function saveUsers(users) {
+      localStorage.setItem(STORAGE_KEYS.adminUsers, JSON.stringify(users));
+    }
+
+    function initAdminModule() {
+      renderGroupsTable();
+      renderPermissionsChecklist();
+      renderUserGroupsChecklist();
+      renderCostCentersChecklist();
+      renderUsersTable();
+      toggleCostCenters();
+    }
+
+    function renderGroupsTable() {
+      const groups = getGroups();
+      const tbody = document.getElementById('groupsTableBody');
+      if (!tbody) return;
+      if (groups.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3">Nenhum grupo cadastrado.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = groups.map(g => `
+        <tr>
+          <td><strong>${g.nome}</strong></td>
+          <td>${g.descricao || '-'}</td>
+          <td>
+            <button class="admin-btn secondary" onclick="selectGroupForPermissions('${g.id}')">Permissoes</button>
+            <button class="admin-btn secondary" onclick="editGroup('${g.id}')">Editar</button>
+            <button class="admin-btn warn" onclick="deleteGroup('${g.id}')">Excluir</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function saveGroup() {
+      const nome = document.getElementById('groupName').value.trim();
+      const descricao = document.getElementById('groupDesc').value.trim();
+      const status = document.getElementById('groupStatus');
+      if (!nome) {
+        status.style.color = '#c62828';
+        status.textContent = 'Informe o nome do grupo.';
+        return;
+      }
+      const groups = getGroups();
+      if (editingGroupId) {
+        const idx = groups.findIndex(g => g.id === editingGroupId);
+        if (idx >= 0) {
+          groups[idx].nome = nome;
+          groups[idx].descricao = descricao;
+        }
+      } else {
+        groups.push({ id: 'g_' + Date.now(), nome, descricao, permissoes: ['Home'] });
+      }
+      saveGroups(groups);
+      resetGroupForm();
+      renderGroupsTable();
+      renderUserGroupsChecklist();
+      status.style.color = '#2e7d32';
+      status.textContent = 'Grupo salvo com sucesso.';
+    }
+
+    function editGroup(groupId) {
+      const group = getGroups().find(g => g.id === groupId);
+      if (!group) return;
+      editingGroupId = groupId;
+      document.getElementById('groupName').value = group.nome || '';
+      document.getElementById('groupDesc').value = group.descricao || '';
+      document.getElementById('groupStatus').textContent = 'Editando grupo selecionado.';
+    }
+
+    function resetGroupForm() {
+      editingGroupId = null;
+      document.getElementById('groupName').value = '';
+      document.getElementById('groupDesc').value = '';
+    }
+
+    function deleteGroup(groupId) {
+      if (!confirm('Excluir este grupo?')) return;
+      let groups = getGroups().filter(g => g.id !== groupId);
+      saveGroups(groups);
+      if (selectedGroupIdForPerm === groupId) {
+        selectedGroupIdForPerm = null;
+      }
+      renderGroupsTable();
+      renderPermissionsChecklist();
+      renderUserGroupsChecklist();
+      const users = getUsers().map(u => ({ ...u, grupos: (u.grupos || []).filter(g => g !== groupId) }));
+      saveUsers(users);
+      renderUsersTable();
+    }
+
+    function selectGroupForPermissions(groupId) {
+      selectedGroupIdForPerm = groupId;
+      renderPermissionsChecklist();
+    }
+
+    function renderPermissionsChecklist() {
+      const groups = getGroups();
+      const wrap = document.getElementById('permissionsContainer');
+      const label = document.getElementById('selectedGroupLabel');
+      if (!wrap || !label) return;
+      const group = groups.find(g => g.id === selectedGroupIdForPerm) || null;
+      label.textContent = group ? group.nome : 'Nenhum';
+      if (!group) {
+        wrap.innerHTML = '<div class="perm-item">Selecione um grupo para configurar permissoes.</div>';
+        return;
+      }
+      const selected = new Set(group.permissoes || []);
+      wrap.innerHTML = ADMIN_MODULES.map(mod => `
+        <div class="perm-item">
+          <label><input type="checkbox" class="perm-check" value="${mod}" ${selected.has(mod) ? 'checked' : ''}/> ${mod}</label>
+        </div>
+      `).join('');
+    }
+
+    function saveGroupPermissions() {
+      const status = document.getElementById('permStatus');
+      if (!selectedGroupIdForPerm) {
+        status.style.color = '#c62828';
+        status.textContent = 'Selecione um grupo antes de salvar permissoes.';
+        return;
+      }
+      const selected = Array.from(document.querySelectorAll('.perm-check:checked')).map(c => c.value);
+      if (!selected.includes('Home')) selected.unshift('Home');
+      const groups = getGroups();
+      const idx = groups.findIndex(g => g.id === selectedGroupIdForPerm);
+      if (idx < 0) return;
+      groups[idx].permissoes = selected;
+      saveGroups(groups);
+      status.style.color = '#2e7d32';
+      status.textContent = 'Permissoes salvas.';
+      renderGroupsTable();
+    }
+
+    function renderUserGroupsChecklist() {
+      const wrap = document.getElementById('userGroupsContainer');
+      if (!wrap) return;
+      const groups = getGroups();
+      if (groups.length === 0) {
+        wrap.innerHTML = '<div class="perm-item">Cadastre grupos para vincular usuarios.</div>';
+        return;
+      }
+      wrap.innerHTML = groups.map(g => `
+        <div class="perm-item"><label><input type="checkbox" class="user-group-check" value="${g.id}" /> ${g.nome}</label></div>
+      `).join('');
+    }
+
+    function renderCostCentersChecklist() {
+      const wrap = document.getElementById('costCenterContainer');
+      if (!wrap) return;
+      wrap.innerHTML = COST_CENTERS.map(cc => `
+        <div class="cc-item"><label><input type="checkbox" class="cc-check" value="${cc}" /> ${cc}</label></div>
+      `).join('');
+    }
+
+    function toggleCostCenters() {
+      const value = document.getElementById('userRestrictCost')?.value;
+      const wrap = document.getElementById('costCenterWrap');
+      if (!wrap) return;
+      wrap.style.display = value === 'sim' ? 'block' : 'none';
+    }
+
+    function saveUser() {
+      const nome = document.getElementById('userName').value.trim();
+      const login = document.getElementById('userLogin').value.trim();
+      const senha = document.getElementById('userPassword').value;
+      const senha2 = document.getElementById('userPasswordConfirm').value;
+      const email = document.getElementById('userEmail').value.trim();
+      const ativo = document.getElementById('userActive').value === 'sim';
+      const restringeCC = document.getElementById('userRestrictCost').value === 'sim';
+      const grupos = Array.from(document.querySelectorAll('.user-group-check:checked')).map(c => c.value);
+      const centros = Array.from(document.querySelectorAll('.cc-check:checked')).map(c => c.value);
+      const status = document.getElementById('userStatus');
+
+      if (!nome || !login || !senha || !senha2 || !email) {
+        status.style.color = '#c62828';
+        status.textContent = 'Preencha nome, login, senha, confirmaao e e-mail.';
+        return;
+      }
+      if (senha !== senha2) {
+        status.style.color = '#c62828';
+        status.textContent = 'Senha e confirmaao de senha nao conferem.';
+        return;
+      }
+      if (grupos.length === 0) {
+        status.style.color = '#c62828';
+        status.textContent = 'Selecione ao menos um grupo para o usuario.';
+        return;
+      }
+
+      let users = getUsers();
+      if (editingUserId) {
+        const idx = users.findIndex(u => u.id === editingUserId);
+        if (idx >= 0) {
+          users[idx] = { ...users[idx], nome, login, senha, email, ativo, restringeCC, grupos, centrosCusto: restringeCC ? centros : [] };
+        }
+      } else {
+        users.push({ id: 'u_' + Date.now(), nome, login, senha, email, ativo, bloqueado: false, restringeCC, grupos, centrosCusto: restringeCC ? centros : [], criadoEm: new Date().toISOString() });
+      }
+      saveUsers(users);
+      resetUserForm();
+      renderUsersTable();
+      status.style.color = '#2e7d32';
+      status.textContent = 'Usuario salvo com sucesso.';
+    }
+
+    function resetUserForm() {
+      editingUserId = null;
+      document.getElementById('userName').value = '';
+      document.getElementById('userLogin').value = '';
+      document.getElementById('userPassword').value = '';
+      document.getElementById('userPasswordConfirm').value = '';
+      document.getElementById('userEmail').value = '';
+      document.getElementById('userActive').value = 'sim';
+      document.getElementById('userRestrictCost').value = 'nao';
+      document.querySelectorAll('.user-group-check').forEach(c => c.checked = false);
+      document.querySelectorAll('.cc-check').forEach(c => c.checked = false);
+      toggleCostCenters();
+    }
+
+    function renderUsersTable() {
+      const users = getUsers();
+      const groups = getGroups();
+      const tbody = document.getElementById('usersTableBody');
+      if (!tbody) return;
+      if (users.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4">Nenhum usuario cadastrado.</td></tr>';
+        return;
+      }
+      const mapGroupName = id => (groups.find(g => g.id === id)?.nome || id);
+      tbody.innerHTML = users.map(u => `
+        <tr>
+          <td><strong>${u.nome}</strong><br><small>${(u.grupos || []).map(mapGroupName).join(', ')}</small></td>
+          <td>${u.login}${u.bloqueado ? ' <span class="badge invalida">Bloqueado</span>' : ''}</td>
+          <td>${u.email}</td>
+          <td>
+            <button class="admin-btn secondary" onclick="editUser('${u.id}')">Editar</button>
+            <button class="admin-btn secondary" onclick="toggleUserBlock('${u.id}')">${u.bloqueado ? 'Desbloquear' : 'Bloquear'}</button>
+            <button class="admin-btn warn" onclick="deleteUser('${u.id}')">Excluir</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function editUser(userId) {
+      const user = getUsers().find(u => u.id === userId);
+      if (!user) return;
+      editingUserId = userId;
+      document.getElementById('userName').value = user.nome || '';
+      document.getElementById('userLogin').value = user.login || '';
+      document.getElementById('userPassword').value = user.senha || '';
+      document.getElementById('userPasswordConfirm').value = user.senha || '';
+      document.getElementById('userEmail').value = user.email || '';
+      document.getElementById('userActive').value = user.ativo ? 'sim' : 'nao';
+      document.getElementById('userRestrictCost').value = user.restringeCC ? 'sim' : 'nao';
+      toggleCostCenters();
+      document.querySelectorAll('.user-group-check').forEach(c => {
+        c.checked = (user.grupos || []).includes(c.value);
+      });
+      document.querySelectorAll('.cc-check').forEach(c => {
+        c.checked = (user.centrosCusto || []).includes(c.value);
+      });
+      document.getElementById('userStatus').textContent = 'Editando usuario selecionado.';
+    }
+
+    function toggleUserBlock(userId) {
+      const users = getUsers();
+      const idx = users.findIndex(u => u.id === userId);
+      if (idx < 0) return;
+      users[idx].bloqueado = !users[idx].bloqueado;
+      saveUsers(users);
+      renderUsersTable();
+    }
+
+    function deleteUser(userId) {
+      if (!confirm('Excluir este usuario?')) return;
+      const users = getUsers().filter(u => u.id !== userId);
+      saveUsers(users);
+      renderUsersTable();
+    }
+
+    function showChecklistTab(tab, el) {
+      document.querySelectorAll('.checklist-tab').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+      ['pessoal','obra','imovel','faixa1'].forEach(t => {
+        document.getElementById('chk-' + t).style.display = t === tab ? 'block' : 'none';
+      });
+    }
+
+    function saveChecklist() {
+      const ids = ['c1','c2','c3','c4','c5','c6','c7','c8','c9','c10',
+                   'o1','o2','o3','o4','o5','o6','o7','o8','o9','o10','o11','o12','o13','o14',
+                   'i1','i2','i3','i4',
+                   'f1','f2','f3','f4','f5','f6','f7','f8'];
+      const state = {};
+      ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) state[id] = el.checked;
+      });
+      localStorage.setItem('mcmv_checklist', JSON.stringify(state));
+    }
+
+    function loadChecklist() {
+      const raw = localStorage.getItem('mcmv_checklist');
+      if (!raw) return;
+      try {
+        const state = JSON.parse(raw);
+        Object.keys(state).forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.checked = state[id];
+        });
+      } catch (e) { console.warn('Falha ao carregar checklist', e); }
+    }
+
+    function addWaitlistLead() {
+      const nome = document.getElementById('leadNome').value.trim();
+      const telefone = document.getElementById('leadTelefone').value.trim();
+      const renda = parseCurrencyBRL(document.getElementById('leadRenda').value);
+      const area = document.getElementById('leadArea').value;
+      const porteCidade = document.getElementById('leadPorteCidade').value;
+      const valorImovel = parseCurrencyBRL(document.getElementById('leadValorImovel').value);
+      const prazoMeses = Math.max(1, Number(document.getElementById('leadPrazo').value) || 360);
+      const usaFgts = document.getElementById('leadUsaFgts').value === 'sim';
+      const feedback = document.getElementById('leadFeedback');
+
+      if (!nome || !telefone || !renda || !valorImovel) {
+        feedback.style.color = '#F44336';
+        feedback.textContent = 'Preencha nome, telefone, renda e valor do imovel para cadastrar.';
+        return;
+      }
+
+      const phoneDigits = telefone.replace(/\D/g, '');
+      if (phoneDigits.length < 10 || phoneDigits.length > 11) {
+        feedback.style.color = '#F44336';
+        feedback.textContent = 'Telefone invalido. Informe DDD + numero.';
+        return;
+      }
+
+      const classif = classifyMcmvByIncome(renda, area);
+
+      if (classif.elegivel) {
+        const limiteImovel = getLimiteImovelPorFaixa(classif.faixa, porteCidade);
+        if (limiteImovel) {
+          if (valorImovel < limiteImovel.min) {
+            feedback.style.color = '#F44336';
+            feedback.textContent = `Valor do imovel abaixo do minimo para ${limiteImovel.descricao}: ${formatMoney(limiteImovel.min)}.`;
+            return;
+          }
+          if (valorImovel > limiteImovel.max) {
+            feedback.style.color = '#F44336';
+            feedback.textContent = `Valor do imovel acima do limite para ${limiteImovel.descricao}: ${formatMoney(limiteImovel.max)}.`;
+            return;
+          }
+        }
+      }
+
+      const subsidio = classif.elegivel ? estimateSubsidy(classif.faixa, renda, valorImovel) : 0;
+      let valorFinanciado = Math.max(0, valorImovel - subsidio);
+      if (usaFgts) {
+        valorFinanciado = valorFinanciado * (1 - MCMV_CALIBRACAO.fgtsReducaoPercentual);
+      }
+      const jurosAnual = getAnnualRateByFaixa(classif.faixa);
+      const parcelaEstimada = classif.elegivel
+        ? estimateInstallment(valorFinanciado, jurosAnual, prazoMeses)
+        : 0;
+      const etapa = getInitialStage(classif.elegivel);
+
+      let data = [];
+      const localWaitlistRaw = localStorage.getItem(STORAGE_KEYS.waitlist);
+      if (localWaitlistRaw) {
+        try {
+          data = JSON.parse(localWaitlistRaw) || [];
+        } catch (e) {
+          console.warn('Falha ao ler lista local:', e);
+        }
+      }
+
+      data.unshift({
+        nome,
+        telefone,
+        renda,
+        area,
+        porteCidade,
+        valorImovel,
+        prazoMeses,
+        usaFgts,
+        faixa: classif.faixa,
+        elegivel: classif.elegivel,
+        subsidioEstimado: subsidio,
+        taxaJurosAnual: jurosAnual,
+        valorFinanciado,
+        parcelaEstimada,
+        etapa,
+        checklist: getChecklistText(classif.faixa),
+        data: new Date().toISOString()
+      });
+
+      localStorage.setItem(STORAGE_KEYS.waitlist, JSON.stringify(data));
+
+      document.getElementById('leadNome').value = '';
+      document.getElementById('leadTelefone').value = '';
+      document.getElementById('leadRenda').value = '';
+      document.getElementById('leadValorImovel').value = '';
+
+      feedback.style.color = classif.elegivel ? '#4CAF50' : '#F44336';
+      feedback.textContent = classif.elegivel
+        ? `Cadastro salvo. ${classif.faixa} | Subsidio: ${formatMoney(subsidio)} | Parcela estimada: ${formatMoney(parcelaEstimada)}.`
+        : 'Cadastro salvo, porm fora das regras de renda do MCMV.';
+
+      // Adiciona automaticamente ao KANBAN do CRM
+      addLeadToKanban({
+        nome,
+        telefone,
+        renda,
+        area,
+        porteCidade,
+        valorImovel,
+        prazoMeses,
+        usaFgts,
+        faixa: classif.faixa,
+        elegivel: classif.elegivel,
+        subsidioEstimado: subsidio,
+        taxaJurosAnual: jurosAnual,
+        valorFinanciado,
+        parcelaEstimada,
+        etapa,
+        checklist: getChecklistText(classif.faixa),
+        data: new Date().toISOString()
+      });
+
+      loadWaitlist();
+    }
+
+    function updateLeadStageByIndex(index, etapa) {
+      let data = [];
+      const localWaitlistRaw = localStorage.getItem(STORAGE_KEYS.waitlist);
+      if (localWaitlistRaw) {
+        try {
+          data = JSON.parse(localWaitlistRaw) || [];
+        } catch (e) {
+          console.warn('Falha ao ler lista local:', e);
+        }
+      }
+      if (!data[index]) return;
+      data[index].etapa = etapa;
+      localStorage.setItem(STORAGE_KEYS.waitlist, JSON.stringify(data));
+      loadWaitlist();
     }
 
     // ========== LISTA DE ESPERA ==========
     async function loadWaitlist() {
       const container = document.getElementById('waitlistContent');
-      try {
-        const resp = await fetch('/api/waitlist', {
-          headers: { 'Authorization': adminToken }
-        });
-        if (!resp.ok) throw new Error('Erro ' + resp.status);
-        const data = await resp.json();
+
+      if (LOCAL_ONLY_MODE) {
+        let data = [];
+        const localWaitlistRaw = localStorage.getItem(STORAGE_KEYS.waitlist);
+        if (localWaitlistRaw) {
+          try {
+            data = JSON.parse(localWaitlistRaw) || [];
+          } catch (e) {
+            console.warn('Falha ao ler lista local:', e);
+          }
+        }
 
         if (!data || data.length === 0) {
-          container.innerHTML = '<div class="waitlist-empty">📭 Nenhum interessado na lista de espera ainda.</div>';
+          container.innerHTML = '<div class="waitlist-empty"> Nenhum interessado na lista de espera local ainda.</div>';
           return;
         }
 
         let html = `
           <table class="waitlist-table">
             <thead>
-              <tr><th>#</th><th>Nome</th><th>Telefone</th><th>Data</th><th>Ação</th></tr>
+              <tr><th>#</th><th>Nome</th><th>Telefone</th><th>Renda</th><th>Imovel</th><th>Subsidio</th><th>Parcela</th><th>Faixa</th><th>Etapa</th><th>Evoluao</th><th>Checklist</th><th>Data</th></tr>
+            </thead>
+            <tbody>
+        `;
+        data.forEach((item, idx) => {
+          const date = new Date(item.data || Date.now());
+          const dateStr = date.toLocaleDateString('pt-BR') + ' ' + date.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
+          const rendaStr = formatMoney(item.renda || 0);
+          const imovelStr = formatMoney(item.valorImovel || 0);
+          const subsidioStr = formatMoney(item.subsidioEstimado || 0);
+          const parcelaStr = formatMoney(item.parcelaEstimada || 0);
+          const badgeClass = faixaBadgeClass(item.faixa);
+          const etapa = item.etapa || 'cadastro';
+          const etapaClass = etapaBadgeClass(etapa);
+          const etapaOptions = MCMV_RULES.etapas.map(e => `<option value="${e}" ${e === etapa ? 'selected' : ''}>${e}</option>`).join('');
+          html += `
+            <tr>
+              <td>${idx + 1}</td>
+              <td><strong>${item.nome || '-'}</strong></td>
+              <td>${item.telefone || '-'}</td>
+              <td>${rendaStr}</td>
+              <td>${imovelStr}</td>
+              <td>${subsidioStr}</td>
+              <td>${parcelaStr}</td>
+              <td><span class="badge ${badgeClass}">${item.faixa || '-'}</span></td>
+              <td><span class="badge ${etapaClass}">${etapa}</span></td>
+              <td>
+                <select class="stage-select" onchange="updateLeadStageByIndex(${idx}, this.value)">
+                  ${etapaOptions}
+                </select>
+              </td>
+              <td style="max-width:220px;">${item.checklist || '-'}</td>
+              <td>${dateStr}</td>
+            </tr>
+          `;
+        });
+        html += '</tbody></table>';
+        html += `<div style="text-align:center; margin-top:20px;">
+          <button class="btn-clear-waitlist" onclick="clearWaitlist()"> Limpar Lista</button>
+          <span style="display:block; margin-top:8px; font-size:12px; color:#999;">Total: ${data.length} interessado(s)</span>
+        </div>`;
+        container.innerHTML = html;
+        return;
+      }
+
+      try {
+        const resp = await fetch(buildApiUrl('/api/waitlist'), {
+          headers: { 'Authorization': adminToken }
+        });
+        if (!resp.ok) throw new Error('Erro ' + resp.status);
+        const data = await resp.json();
+
+        if (!data || data.length === 0) {
+          container.innerHTML = '<div class="waitlist-empty"> Nenhum interessado na lista de espera ainda.</div>';
+          return;
+        }
+
+        let html = `
+          <table class="waitlist-table">
+            <thead>
+              <tr><th>#</th><th>Nome</th><th>Telefone</th><th>Renda</th><th>Imovel</th><th>Subsidio</th><th>Parcela</th><th>Faixa</th><th>Etapa</th><th>Checklist</th><th>Data</th></tr>
             </thead>
             <tbody>
         `;
         data.forEach((item, idx) => {
           const date = new Date(item.data);
           const dateStr = date.toLocaleDateString('pt-BR') + ' ' + date.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
-          const whatsappMsg = encodeURIComponent(`Olá ${item.nome}! Temos uma novidade sobre o Firenze Studios. Uma unidade ficou disponível! Gostaria de mais informações?`);
-          const whatsappNum = item.telefone.replace(/\D/g, '');
+          const rendaStr = formatMoney(item.renda || 0);
+          const imovelStr = formatMoney(item.valorImovel || 0);
+          const subsidioStr = formatMoney(item.subsidioEstimado || 0);
+          const parcelaStr = formatMoney(item.parcelaEstimada || 0);
+          const badgeClass = faixaBadgeClass(item.faixa);
+          const etapa = item.etapa || 'cadastro';
+          const etapaClass = etapaBadgeClass(etapa);
           html += `
             <tr>
               <td>${idx + 1}</td>
               <td><strong>${item.nome}</strong></td>
               <td>${item.telefone}</td>
+              <td>${rendaStr}</td>
+              <td>${imovelStr}</td>
+              <td>${subsidioStr}</td>
+              <td>${parcelaStr}</td>
+              <td><span class="badge ${badgeClass}">${item.faixa || '-'}</span></td>
+              <td><span class="badge ${etapaClass}">${etapa}</span></td>
+              <td style="max-width:220px;">${item.checklist || '-'}</td>
               <td>${dateStr}</td>
-              <td><a href="https://wa.me/55${whatsappNum}?text=${whatsappMsg}" target="_blank" style="color:#4CAF50; font-weight:700; text-decoration:none;">📱 WhatsApp</a></td>
             </tr>
           `;
         });
         html += '</tbody></table>';
         html += `<div style="text-align:center; margin-top:20px;">
-          <button class="btn-clear-waitlist" onclick="clearWaitlist()">🗑️ Limpar Lista</button>
+          <button class="btn-clear-waitlist" onclick="clearWaitlist()"> Limpar Lista</button>
           <span style="display:block; margin-top:8px; font-size:12px; color:#999;">Total: ${data.length} interessado(s)</span>
         </div>`;
         container.innerHTML = html;
       } catch (e) {
-        container.innerHTML = '<div class="waitlist-empty">⚠️ Erro ao carregar lista: ' + e.message + '</div>';
+        container.innerHTML = '<div class="waitlist-empty"> Erro ao carregar lista: ' + e.message + '</div>';
       }
     }
 
     async function clearWaitlist() {
       if (!confirm('Tem certeza que deseja limpar toda a lista de espera?')) return;
+
+      if (LOCAL_ONLY_MODE) {
+        localStorage.removeItem(STORAGE_KEYS.waitlist);
+        loadWaitlist();
+        return;
+      }
+
       try {
-        await fetch('/api/waitlist', {
+        await fetch(buildApiUrl('/api/waitlist'), {
           method: 'DELETE',
           headers: { 'Authorization': adminToken }
         });
@@ -555,6 +2792,649 @@
         alert('Erro ao limpar: ' + e.message);
       }
     }
+
+    // ========== KANBAN CRM ==========
+    function getKanbanLeads() {
+      const raw = localStorage.getItem(STORAGE_KEYS.kanbanLeads);
+      if (!raw) return [];
+      try { return JSON.parse(raw); } catch (e) { return []; }
+    }
+
+    function saveKanbanLeads(leads) {
+      localStorage.setItem(STORAGE_KEYS.kanbanLeads, JSON.stringify(leads));
+    }
+
+    function loadKanban() {
+      // Sincroniza leads do waitlist com o kanban ao primeira vez
+      const waitlistLeads = (() => {
+        const raw = localStorage.getItem(STORAGE_KEYS.waitlist);
+        return raw ? (JSON.parse(raw) || []) : [];
+      })();
+
+      let kanbanLeads = getKanbanLeads();
+      
+      // Se não há leads no kanban, importa do waitlist
+      if (kanbanLeads.length === 0 && waitlistLeads.length > 0) {
+        kanbanLeads = waitlistLeads.map(lead => ({
+          id: 'lead_' + Date.now() + '_' + Math.random(),
+          ...lead,
+          status: 'novo'
+        }));
+        saveKanbanLeads(kanbanLeads);
+      }
+      
+      // Se ainda não há leads, cria um de TESTE
+      if (kanbanLeads.length === 0) {
+        const now = new Date();
+        const testLead = {
+          id: 'lead_test_' + Date.now(),
+          nome: 'João Silva Santos',
+          telefone: '(11) 98765-4321',
+          renda: 2500,
+          area: 'urbana',
+          porteCidade: 'acima750',
+          valorImovel: 250000,
+          prazoMeses: 360,
+          usaFgts: 'sim',
+          faixa: '2',
+          elegivel: true,
+          subsidioEstimado: 45000,
+          taxaJurosAnual: 7.35,
+          valorFinanciado: 205000,
+          parcelaEstimada: 1480,
+          status: 'novo',
+          description: 'Cliente interessado em financiamento MCMV. Documentação em andamento.',
+          attachments: [
+            { name: 'RG_frente.pdf', date: '2026-03-10' },
+            { name: 'CPF.pdf', date: '2026-03-10' },
+            { name: 'Comprovante_renda.pdf', date: '2026-03-11' }
+          ],
+          tags: ['URGENTE', 'DOCUMENTAÇÃO_PENDENTE', 'FGTS_SIM'],
+          importantDates: {
+            'Data de Análise': new Date(now.getTime() + 7*24*60*60*1000).toISOString().split('T')[0],
+            'Prazo Documentação': new Date(now.getTime() + 14*24*60*60*1000).toISOString().split('T')[0],
+            'Vencimento Proposta': new Date(now.getTime() + 21*24*60*60*1000).toISOString().split('T')[0]
+          },
+          checklist: [
+            { name: 'RG original', done: true },
+            { name: 'CPF', done: true },
+            { name: 'Comprovante de renda', done: true },
+            { name: 'Escritura do imóvel', done: false },
+            { name: 'Foto do imóvel', done: false }
+          ],
+          history: [
+            { action: 'Criado', user: 'Sistema', timestamp: new Date(now.getTime() - 86400000).toISOString() },
+            { action: 'Documento RG anexado', user: 'Gabriela', timestamp: new Date(now.getTime() - 43200000).toISOString() },
+            { action: 'Classificado como FAIXA 2', user: 'Sistema', timestamp: new Date(now.getTime() - 3600000).toISOString() }
+          ]
+        };
+        
+        kanbanLeads = [testLead];
+        saveKanbanLeads(kanbanLeads);
+      }
+
+      renderKanban(kanbanLeads);
+    }
+
+    function renderKanban(leads) {
+      const statuses = ['novo', 'contato', 'analise', 'aprovado', 'finalizado'];
+      const currentUser = getCurrentUser() || 'Sistema';
+      
+      console.log('renderKanban chamado com', leads.length, 'leads', leads);
+      
+      statuses.forEach(status => {
+        const content = document.getElementById('kanban-' + status);
+        console.log('Procurando por kanban-' + status, ':', content ? 'ENCONTRADO' : 'NÃO ENCONTRADO');
+        if (!content) return;
+        
+        const statusLeads = leads.filter(l => l.status === status);
+        console.log('Leads com status "' + status + '":', statusLeads.length);
+        
+        const count = content.parentElement.querySelector('.kanban-column-count');
+        if (count) count.textContent = statusLeads.length;
+
+        content.innerHTML = '';
+        statusLeads.forEach(lead => {
+          const card = document.createElement('div');
+          card.className = 'kanban-card';
+          card.draggable = true;
+          card.dataset.leadId = lead.id;
+          
+          // Renderizar histórico
+          let historyHtml = '';
+          if (lead.history && lead.history.length > 0) {
+            const latestHistory = lead.history.slice(-3).reverse();
+            historyHtml = `
+              <div class="kanban-card-history">
+                <div class="kanban-card-history-toggle" onclick="toggleHistoryInCard(this)">Histórico</div>
+                <div class="kanban-history-list" style="display:none;">
+            `;
+            latestHistory.forEach(h => {
+              const date = new Date(h.timestamp);
+              const dateStr = date.toLocaleDateString('pt-BR') + ' às ' + date.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
+              historyHtml += `
+                <div class="kanban-history-item">
+                  <div class="kanban-history-action">${h.action}</div>
+                  <div class="kanban-history-user">Responsável: ${h.user || 'Sistema'}</div>
+                  <div class="kanban-history-time">${dateStr}</div>
+                </div>
+              `;
+            });
+            historyHtml += '</div></div>';
+          }
+          
+          card.innerHTML = `
+            <div class="kanban-card-title" style="cursor:pointer;" onclick="event.stopPropagation(); openKanbanModal('${lead.id}')">${lead.nome || 'Sem nome'}</div>
+            <div class="kanban-card-info" style="cursor:pointer;" onclick="event.stopPropagation(); openKanbanModal('${lead.id}')">
+              <span><strong>Fone:</strong> ${lead.telefone || '-'}</span>
+              <span><strong>Renda:</strong> ${formatMoney(lead.renda || 0)}</span>
+              <span><strong>Imovel:</strong> ${formatMoney(lead.valorImovel || 0)}</span>
+              <span><strong>Faixa:</strong> ${lead.faixa || '-'}</span>
+            </div>
+            <div class="kanban-card-actions">
+              <button class="kanban-card-btn" onclick="event.stopPropagation(); moveLeadToNext('${lead.id}')">Avançar</button>
+              <button class="kanban-card-btn" onclick="event.stopPropagation(); removeLeadFromKanban('${lead.id}')">Remover</button>
+            </div>
+            ${historyHtml}
+          `;
+          
+          card.addEventListener('click', (e) => {
+            if (e.target.closest('.kanban-card-actions')) return;
+            openKanbanModal(lead.id);
+          });
+          
+          card.addEventListener('dragstart', (e) => {
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('leadId', lead.id);
+            card.classList.add('dragging');
+          });
+          card.addEventListener('dragend', () => card.classList.remove('dragging'));
+          
+          content.appendChild(card);
+        });
+      });
+    }
+
+    function toggleHistoryInCard(el) {
+      const historyList = el.nextElementSibling;
+      if (historyList) {
+        historyList.style.display = historyList.style.display === 'none' ? 'block' : 'none';
+      }
+    }
+
+    function generateImportantDates(lead) {
+      const dates = {};
+      const today = new Date();
+      
+      // Data de análise: 7 dias após criação
+      const analyzeDate = new Date(today);
+      analyzeDate.setDate(analyzeDate.getDate() + 7);
+      dates['Data de Análise'] = analyzeDate.toISOString().split('T')[0];
+      
+      // Data de documentação: 14 dias após criação
+      const docDate = new Date(today);
+      docDate.setDate(docDate.getDate() + 14);
+      dates['Prazo Documentação'] = docDate.toISOString().split('T')[0];
+      
+      // Data de vencimento proposta: 21 dias após criação
+      const expireDate = new Date(today);
+      expireDate.setDate(expireDate.getDate() + 21);
+      dates['Vencimento Proposta'] = expireDate.toISOString().split('T')[0];
+      
+      // Data de aprovação: 30 dias após criação (se faixa 1 ou 2)
+      if (lead.faixa === '1' || lead.faixa === '2') {
+        const approveDate = new Date(today);
+        approveDate.setDate(approveDate.getDate() + 30);
+        dates['Previsão Aprovação'] = approveDate.toISOString().split('T')[0];
+      }
+      
+      return dates;
+    }
+
+    function getCurrentUser() {
+      // Tenta pegar do login ou storage
+      const userEmail = document.getElementById('loginEmail')?.value || localStorage.getItem('currentUser') || null;
+      if (userEmail) return userEmail.split('@')[0] || userEmail;
+      return 'Usuário';
+    }
+
+    function moveLeadToNext(leadId) {
+      let leads = getKanbanLeads();
+      const lead = leads.find(l => l.id === leadId);
+      if (!lead) return;
+
+      const statuses = ['novo', 'contato', 'analise', 'aprovado', 'finalizado'];
+      const currentIdx = statuses.indexOf(lead.status);
+      if (currentIdx < statuses.length - 1) {
+        const oldStatus = lead.status;
+        lead.status = statuses[currentIdx + 1];
+        
+        // Registrar no histórico
+        addHistoryToLead(lead, `Movido de "${oldStatus}" para "${lead.status}"`);
+        
+        saveKanbanLeads(leads);
+        renderKanban(leads);
+      }
+    }
+
+    function removeLeadFromKanban(leadId) {
+      if (!confirm('Deseja remover este lead do kanban?')) return;
+      let leads = getKanbanLeads();
+      const lead = leads.find(l => l.id === leadId);
+      if (lead) {
+        addHistoryToLead(lead, 'Removido do kanban');
+      }
+      leads = leads.filter(l => l.id !== leadId);
+      saveKanbanLeads(leads);
+      renderKanban(leads);
+    }
+
+    function addLeadToKanban(leadData) {
+      let leads = getKanbanLeads();
+      const newLead = {
+        id: 'lead_' + Date.now() + '_' + Math.random(),
+        ...leadData,
+        status: 'novo',
+        history: [{
+          action: 'Criado',
+          user: getCurrentUser(),
+          timestamp: new Date().toISOString()
+        }]
+      };
+      leads.unshift(newLead);
+      saveKanbanLeads(leads);
+      renderKanban(leads);
+    }
+
+    function addHistoryToLead(lead, action) {
+      if (!lead.history) lead.history = [];
+      lead.history.push({
+        action: action,
+        user: getCurrentUser(),
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    // Drag and Drop nas colunas
+    document.addEventListener('DOMContentLoaded', function() {
+      const columns = document.querySelectorAll('.kanban-column-content');
+      columns.forEach(col => {
+        col.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          col.style.backgroundColor = '#f0f0f0';
+        });
+        col.addEventListener('dragleave', () => {
+          col.style.backgroundColor = '';
+        });
+        col.addEventListener('drop', (e) => {
+          e.preventDefault();
+          col.style.backgroundColor = '';
+          const leadId = e.dataTransfer.getData('leadId');
+          const newStatus = col.id.replace('kanban-', '');
+          
+          let leads = getKanbanLeads();
+          const lead = leads.find(l => l.id === leadId);
+          if (lead && lead.status !== newStatus) {
+            const oldStatus = lead.status;
+            lead.status = newStatus;
+            addHistoryToLead(lead, `Movido de "${oldStatus}" para "${newStatus}"`);
+            saveKanbanLeads(leads);
+            renderKanban(leads);
+          }
+        });
+      });
+    });
+
+    // ========== KANBAN MODAL ==========
+    let currentEditingLeadId = null;
+    let isModalEditMode = {
+      info: false,
+      description: false
+    };
+
+    function toggleModalEditMode(field) {
+      isModalEditMode[field] = !isModalEditMode[field];
+      if (isModalEditMode[field]) {
+        activateEditMode(field);
+      } else {
+        saveAndDeactivateEditMode(field);
+      }
+    }
+
+    function activateEditMode(field) {
+      const leads = getKanbanLeads();
+      const lead = leads.find(l => l.id === currentEditingLeadId);
+      if (!lead) return;
+
+      if (field === 'info') {
+        const infoDiv = document.getElementById('kanbanModalInfo');
+        infoDiv.innerHTML = `
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:12px;">
+            <div><strong>Telefone:</strong> <input type="text" id="editTelefone" value="${lead.telefone || ''}" style="width:100%; padding:4px; border:1px solid #ddd; border-radius:4px;"></div>
+            <div><strong>Renda:</strong> <input type="number" id="editRenda" value="${lead.renda || ''}" style="width:100%; padding:4px; border:1px solid #ddd; border-radius:4px;"></div>
+            <div><strong>Imóvel:</strong> <input type="number" id="editValorImovel" value="${lead.valorImovel || ''}" style="width:100%; padding:4px; border:1px solid #ddd; border-radius:4px;"></div>
+            <div><strong>Faixa:</strong> <input type="text" id="editFaixa" value="${lead.faixa || ''}" style="width:100%; padding:4px; border:1px solid #ddd; border-radius:4px;"></div>
+            <div><strong>Área:</strong> <input type="text" id="editArea" value="${lead.area || ''}" style="width:100%; padding:4px; border:1px solid #ddd; border-radius:4px;"></div>
+            <div><strong>Nome:</strong> <input type="text" id="editNome" value="${lead.nome || ''}" style="width:100%; padding:4px; border:1px solid #ddd; border-radius:4px;"></div>
+          </div>
+          <div style="margin-top:10px; display:flex; gap:8px;">
+            <button class="kanban-btn-primary" onclick="toggleModalEditMode('info')" style="flex:1;">Salvar</button>
+            <button class="kanban-btn-secondary" onclick="toggleModalEditMode('info')" style="flex:1;">Cancelar</button>
+          </div>
+        `;
+      } else if (field === 'description') {
+        const descDiv = document.getElementById('kanbanModalDescription');
+        descDiv.innerHTML = `
+          <textarea id="editDescription" style="width:100%; min-height:80px; padding:8px; border:1px solid #ddd; border-radius:4px; font-family:var(--font-main); font-size:12px;">${lead.description || ''}</textarea>
+          <div style="margin-top:10px; display:flex; gap:8px;">
+            <button class="kanban-btn-primary" onclick="toggleModalEditMode('description')" style="flex:1;">Salvar</button>
+            <button class="kanban-btn-secondary" onclick="toggleModalEditMode('description')" style="flex:1;">Cancelar</button>
+          </div>
+        `;
+      } else if (field === 'dates') {
+        const datesDiv = document.getElementById('kanbanModalDates');
+        let datesEditHtml = '';
+        Object.entries(lead.importantDates || {}).forEach(([name, date]) => {
+          datesEditHtml += `
+            <div style="margin-bottom:12px;">
+              <label style="font-size:12px; font-weight:600; color:#666; display:block; margin-bottom:4px;">${name}</label>
+              <input type="date" data-date-field="${name}" value="${date}" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px; font-size:12px;">
+            </div>
+          `;
+        });
+        datesEditHtml += `
+          <div style="margin-top:10px; display:flex; gap:8px;">
+            <button class="kanban-btn-primary" onclick="toggleModalEditMode('dates')" style="flex:1;">Salvar</button>
+            <button class="kanban-btn-secondary" onclick="toggleModalEditMode('dates')" style="flex:1;">Cancelar</button>
+          </div>
+        `;
+        datesDiv.innerHTML = datesEditHtml;
+      }
+    }
+
+    function saveAndDeactivateEditMode(field) {
+      const leads = getKanbanLeads();
+      const lead = leads.find(l => l.id === currentEditingLeadId);
+      if (!lead) return;
+
+      if (field === 'info') {
+        lead.nome = document.getElementById('editNome').value;
+        lead.telefone = document.getElementById('editTelefone').value;
+        lead.renda = parseFloat(document.getElementById('editRenda').value) || 0;
+        lead.valorImovel = parseFloat(document.getElementById('editValorImovel').value) || 0;
+        lead.faixa = document.getElementById('editFaixa').value;
+        lead.area = document.getElementById('editArea').value;
+        addHistoryToLead(lead, 'Informações básicas editadas');
+      } else if (field === 'description') {
+        lead.description = document.getElementById('editDescription').value;
+        addHistoryToLead(lead, 'Descrição atualizada');
+      } else if (field === 'dates') {
+        // Salva datas editadas
+        const dateInputs = document.querySelectorAll('[data-date-field]');
+        dateInputs.forEach(input => {
+          const dateField = input.getAttribute('data-date-field');
+          const dateValue = input.value;
+          if (dateValue) {
+            lead.importantDates[dateField] = dateValue;
+          }
+        });
+        addHistoryToLead(lead, 'Datas importantes editadas');
+      }
+
+      saveKanbanLeads(leads);
+      isModalEditMode[field] = false;
+      openKanbanModal(currentEditingLeadId);
+    }
+
+    function openKanbanModal(leadId) {
+      const leads = getKanbanLeads();
+      const lead = leads.find(l => l.id === leadId);
+      if (!lead) return;
+
+      currentEditingLeadId = leadId;
+      const overlay = document.getElementById('kanbanModalOverlay');
+      
+      // Informações básicas
+      document.getElementById('kanbanModalName').textContent = lead.nome || 'Sem nome';
+      const subtitle = `${lead.telefone || ''} • Renda: ${formatMoney(lead.renda || 0)} • Faixa: ${lead.faixa || '-'}`;
+      document.getElementById('kanbanModalSubtitle').textContent = subtitle;
+
+      // Informações detalhadas
+      let infoHtml = `
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:12px;">
+          <div><strong>Telefone:</strong> ${lead.telefone || '-'}</div>
+          <div><strong>Renda:</strong> ${formatMoney(lead.renda || 0)}</div>
+          <div><strong>Imóvel:</strong> ${formatMoney(lead.valorImovel || 0)}</div>
+          <div><strong>Faixa:</strong> ${lead.faixa || '-'}</div>
+          <div><strong>Área:</strong> ${lead.area || '-'}</div>
+          <div><strong>Status:</strong> <span style="background:#34b26f; color:white; padding:2px 6px; border-radius:3px;text-transform:uppercase;font-weight:700;font-size:10px;">${lead.status}</span></div>
+          <div><strong>Elegível:</strong> ${lead.elegivel ? 'Sim' : 'Não'}</div>
+          <div><strong>Subsídio:</strong> ${formatMoney(lead.subsidioEstimado || 0)}</div>
+        </div>
+        <div style="margin-top:10px;">
+          <button class="kanban-btn-primary" onclick="toggleModalEditMode('info')" style="width:100%;">Editar Informações</button>
+        </div>
+      `;
+      document.getElementById('kanbanModalInfo').innerHTML = infoHtml;
+
+      // Descrição
+      const desc = lead.description || '(Sem descrição)';
+      const descSection = document.getElementById('kanbanDescriptionSection');
+      const descDisplay = document.getElementById('kanbanModalDescription');
+      descDisplay.textContent = desc;
+      if (lead.description) {
+        descDisplay.classList.remove('empty');
+      } else {
+        descDisplay.classList.add('empty');
+      }
+      
+      // Adiciona botão de editar após a descrição
+      let descHtml = `
+        <p id="kanbanModalDescription" style="font-size:12px; line-height:1.6; color:#2b3140; margin-bottom:10px;">${desc}</p>
+        <button class="kanban-btn-primary" onclick="toggleModalEditMode('description')" style="width:100%;">Editar Descrição</button>
+      `;
+      descSection.innerHTML = descHtml;
+
+      // Anexos
+      if (lead.attachments && lead.attachments.length > 0) {
+        document.getElementById('kanbanAttachmentsSection').style.display = 'block';
+        let attachHtml = '';
+        lead.attachments.forEach((att, idx) => {
+          attachHtml += `
+            <div class="kanban-attachment-item">
+              <div class="kanban-attachment-icon">📄</div>
+              <div class="kanban-attachment-info">
+                <div class="kanban-attachment-name">${att.name}</div>
+                <div class="kanban-attachment-date">${new Date(att.date).toLocaleDateString('pt-BR', {hour:'2-digit', minute:'2-digit'})}</div>
+              </div>
+              <button style="background:none; border:none; cursor:pointer; color:#f44336; font-size:14px;" onclick="removeAttachmentFromLead(${idx})">Remover</button>
+            </div>
+          `;
+        });
+        document.getElementById('kanbanModalAttachments').innerHTML = attachHtml;
+      } else {
+        document.getElementById('kanbanAttachmentsSection').style.display = 'none';
+      }
+
+      // Tags
+      if (lead.tags && lead.tags.length > 0) {
+        document.getElementById('kanbanTagsSection').style.display = 'block';
+        let tagsHtml = '';
+        lead.tags.forEach((tag, idx) => {
+          tagsHtml += `
+            <div class="kanban-tag">
+              ${tag}
+              <span style="margin-left:6px; cursor:pointer;" onclick="removeTagFromLead(${idx})">✕</span>
+            </div>
+          `;
+        });
+        document.getElementById('kanbanModalTags').innerHTML = tagsHtml;
+      } else {
+        document.getElementById('kanbanTagsSection').style.display = 'none';
+      }
+
+      // Datas
+      // Auto-preenche datas importantes se vazias
+      if (!lead.importantDates || Object.keys(lead.importantDates).length === 0) {
+        const now = new Date();
+        lead.importantDates = {
+          'Data de Análise': new Date(now.getTime() + 7*24*60*60*1000).toISOString().split('T')[0],
+          'Prazo Documentação': new Date(now.getTime() + 14*24*60*60*1000).toISOString().split('T')[0],
+          'Vencimento Proposta': new Date(now.getTime() + 21*24*60*60*1000).toISOString().split('T')[0]
+        };
+        const leads = getKanbanLeads();
+        const leadIndex = leads.findIndex(l => l.id === currentEditingLeadId);
+        if (leadIndex >= 0) {
+          leads[leadIndex].importantDates = lead.importantDates;
+          saveKanbanLeads(leads);
+        }
+      }
+      
+      if (lead.importantDates && Object.keys(lead.importantDates).length > 0) {
+        document.getElementById('kanbanDatesSection').style.display = 'block';
+        let datesHtml = '';
+        Object.entries(lead.importantDates).forEach(([name, date]) => {
+          datesHtml += `<div style="font-size:12px; margin-bottom:8px;"><strong>${name}:</strong> ${new Date(date).toLocaleDateString('pt-BR')}</div>`;
+        });
+        datesHtml += `<div style="margin-top:10px;">
+          <button class="kanban-btn-primary" onclick="toggleModalEditMode('dates')" style="width:100%;">Editar Datas</button>
+        </div>`;
+        document.getElementById('kanbanModalDates').innerHTML = datesHtml;
+      } else {
+        document.getElementById('kanbanDatesSection').style.display = 'none';
+      }
+
+      // Checklist
+      if (lead.checklist && Array.isArray(lead.checklist) && lead.checklist.length > 0) {
+        document.getElementById('kanbanChecklistSection').style.display = 'block';
+        let checkHtml = '';
+        lead.checklist.forEach((item, idx) => {
+          checkHtml += `
+            <div class="kanban-checklist-item">
+              <input type="checkbox" id="check_${idx}" ${item.done ? 'checked' : ''} onchange="toggleChecklistItem(${idx})">
+              <label for="check_${idx}">${item.name}</label>
+            </div>
+          `;
+        });
+        document.getElementById('kanbanModalChecklist').innerHTML = checkHtml;
+      } else {
+        document.getElementById('kanbanChecklistSection').style.display = 'none';
+      }
+
+      // Histórico
+      if (lead.history && lead.history.length > 0) {
+        let historyHtml = '';
+        lead.history.slice().reverse().forEach(h => {
+          try {
+            const date = new Date(h.timestamp);
+            const dateStr = date.toLocaleDateString('pt-BR') + ' às ' + date.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
+            historyHtml += `
+              <div class="kanban-history-item">
+                <div class="kanban-history-action">${h.action}</div>
+                <div class="kanban-history-user">Responsável: ${h.user || 'Sistema'}</div>
+                <div class="kanban-history-time">${dateStr}</div>
+              </div>
+            `;
+          } catch(e) {
+            console.error('Erro ao renderizar histórico:', h, e);
+          }
+        });
+        document.getElementById('kanbanModalHistory').innerHTML = historyHtml;
+      } else {
+        document.getElementById('kanbanModalHistory').innerHTML = '<div style="font-size:12px; color:#999;">Sem histórico registrado</div>';
+      }
+
+      overlay.classList.add('active');
+    }
+
+    function closeKanbanModal() {
+      document.getElementById('kanbanModalOverlay').classList.remove('active');
+      currentEditingLeadId = null;
+    }
+
+    function moveLeadToNextFromModal() {
+      if (!currentEditingLeadId) return;
+      moveLeadToNext(currentEditingLeadId);
+      closeKanbanModal();
+    }
+
+    function removeLeadFromKanbanModal() {
+      if (!currentEditingLeadId) return;
+      removeLeadFromKanban(currentEditingLeadId);
+      closeKanbanModal();
+    }
+
+    function addAttachmentToLead() {
+      const fileName = prompt('Nome do arquivo:');
+      if (!fileName) return;
+      const leads = getKanbanLeads();
+      const lead = leads.find(l => l.id === currentEditingLeadId);
+      if (!lead) return;
+      if (!lead.attachments) lead.attachments = [];
+      lead.attachments.push({ name: fileName, date: new Date().toISOString() });
+      saveKanbanLeads(leads);
+      openKanbanModal(currentEditingLeadId);
+    }
+
+    function removeAttachmentFromLead(idx) {
+      const leads = getKanbanLeads();
+      const lead = leads.find(l => l.id === currentEditingLeadId);
+      if (!lead || !lead.attachments) return;
+      lead.attachments.splice(idx, 1);
+      saveKanbanLeads(leads);
+      openKanbanModal(currentEditingLeadId);
+    }
+
+    function addTagToLead() {
+      const tagName = prompt('Etiqueta:');
+      if (!tagName) return;
+      const leads = getKanbanLeads();
+      const lead = leads.find(l => l.id === currentEditingLeadId);
+      if (!lead) return;
+      if (!lead.tags) lead.tags = [];
+      lead.tags.push(tagName);
+      saveKanbanLeads(leads);
+      openKanbanModal(currentEditingLeadId);
+    }
+
+    function removeTagFromLead(idx) {
+      const leads = getKanbanLeads();
+      const lead = leads.find(l => l.id === currentEditingLeadId);
+      if (!lead || !lead.tags) return;
+      lead.tags.splice(idx, 1);
+      saveKanbanLeads(leads);
+      openKanbanModal(currentEditingLeadId);
+    }
+
+    function addChecklistItemToLead() {
+      const itemName = prompt('Item do checklist:');
+      if (!itemName) return;
+      const leads = getKanbanLeads();
+      const lead = leads.find(l => l.id === currentEditingLeadId);
+      if (!lead) return;
+      if (!lead.checklist) lead.checklist = [];
+      lead.checklist.push({ name: itemName, done: false });
+      saveKanbanLeads(leads);
+      openKanbanModal(currentEditingLeadId);
+    }
+
+    function toggleChecklistItem(idx) {
+      const leads = getKanbanLeads();
+      const lead = leads.find(l => l.id === currentEditingLeadId);
+      if (!lead || !lead.checklist || !lead.checklist[idx]) return;
+      lead.checklist[idx].done = !lead.checklist[idx].done;
+      saveKanbanLeads(leads);
+    }
+
+    // Fechar modal ao clicar fora
+    document.getElementById('kanbanModalOverlay')?.addEventListener('click', function(e) {
+      if (e.target === this) closeKanbanModal();
+    });
   </script>
 </body>
 </html>
+
+
+
+

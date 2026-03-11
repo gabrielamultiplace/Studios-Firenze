@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin | Plataforma MCMV (Template Local)</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Jost:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --purple-main: #4a0e78;
+      --purple-dark: #2d084f;
+      --yellow-main: #ffb703;
+      --font-alt: 'Jost', sans-serif;
+      --font-main: 'DM Sans', sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-main); background: #f0f0f5; min-height: 100vh; }
+
+    .login-overlay {
+      position: fixed; inset: 0;
+      background: linear-gradient(135deg, var(--purple-main), var(--purple-dark));
+      display: flex; align-items: center; justify-content: center;
+      z-index: 9999;
+    }
+    .login-box {
+      background: white; border-radius: 16px; padding: 45px;
+      width: 420px; max-width: 92%; box-shadow: 0 25px 80px rgba(0,0,0,0.4);
+    }
+    .login-box h1 {
+      font-family: var(--font-alt); font-size: 26px; font-weight: 800;
+      color: var(--purple-main); margin-bottom: 6px; text-transform: uppercase;
+    }
+    .login-box p { color: #999; font-size: 14px; margin-bottom: 30px; }
+    .login-box input {
+      width: 100%; padding: 15px 18px; border: 2px solid #eee; border-radius: 10px;
+      font-size: 15px; margin-bottom: 14px; outline: none; font-family: var(--font-main);
+    }
+    .login-box input:focus { border-color: var(--purple-main); }
+    .login-box button {
+      width: 100%; padding: 17px; background: var(--purple-main); color: white;
+      border: none; border-radius: 10px; font-size: 16px; font-weight: 800;
+      font-family: var(--font-alt); cursor: pointer; text-transform: uppercase;
+    }
+    .login-error {
+      color: #F44336; font-size: 13px; display: none; margin-top: 12px;
+      font-weight: 600; text-align: center;
+    }
+
+    .admin-panel { display: none; }
+    .admin-nav { background: var(--purple-main); color: white; padding: 0 20px; }
+    .admin-nav .container {
+      max-width: 1400px; margin: 0 auto; height: 64px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .admin-nav h2 { font-family: var(--font-alt); font-size: 18px; font-weight: 800; }
+    .admin-nav-links { display: flex; align-items: center; gap: 12px; }
+    .admin-nav .chip {
+      background: rgba(255,255,255,0.15); padding: 8px 12px; border-radius: 6px;
+      font-size: 12px; font-weight: 700; font-family: var(--font-alt);
+    }
+    .admin-nav .btn-logout {
+      background: rgba(255,255,255,0.12); color: #ff7675; border: none; padding: 8px 18px;
+      border-radius: 6px; font-family: var(--font-alt); font-weight: 700;
+      cursor: pointer; font-size: 13px; text-transform: uppercase;
+    }
+
+    .admin-content { max-width: 1400px; margin: 25px auto; padding: 0 20px; }
+
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-bottom: 20px;
+    }
+    .stat-card {
+      background: white; border-radius: 12px; padding: 16px; text-align: center;
+      border-left: 4px solid #ddd; box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    }
+    .stat-card.total { border-left-color: var(--purple-main); }
+    .stat-card.disponivel { border-left-color: #4CAF50; }
+    .stat-card.reservado { border-left-color: #FF9800; }
+    .stat-card.documentacao { border-left-color: #2196F3; }
+    .stat-card.contratado { border-left-color: #673AB7; }
+    .stat-card.entregue { border-left-color: #F44336; }
+    .stat-number { font-size: 28px; font-weight: 800; font-family: var(--font-alt); }
+    .stat-label { font-size: 11px; color: #888; font-weight: 700; text-transform: uppercase; }
+
+    .admin-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+    .admin-tab {
+      padding: 12px 20px; background: white; border: 2px solid #e0e0e0;
+      border-radius: 8px; font-family: var(--font-alt); font-weight: 700;
+      font-size: 13px; cursor: pointer; text-transform: uppercase;
+    }
+    .admin-tab.active { background: var(--purple-main); border-color: var(--purple-main); color: white; }
+
+    .admin-card {
+      background: white; border-radius: 12px; padding: 24px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.04); margin-bottom: 20px;
+    }
+    .admin-card h3 {
+      font-family: var(--font-alt); font-size: 18px; font-weight: 800;
+      color: var(--purple-main); margin-bottom: 15px; text-transform: uppercase;
+    }
+
+    .filters {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px;
+    }
+    .filters input, .filters select {
+      padding: 10px 12px; border: 2px solid #e8e8e8; border-radius: 8px; outline: none;
+      font-family: var(--font-main);
+    }
+
+    .units-admin-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 10px;
+    }
+    .unit-admin-card {
+      border: 2px solid #eee; border-radius: 10px; padding: 12px;
+      display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center;
+    }
+    .unit-admin-card.disponivel { border-color: #C8E6C9; background: #F5FFF5; }
+    .unit-admin-card.reservado { border-color: #FFE0B2; background: #FFFBF0; }
+    .unit-admin-card.documentacao { border-color: #BBDEFB; background: #F4FAFF; }
+    .unit-admin-card.contratado { border-color: #D1C4E9; background: #F8F4FF; }
+    .unit-admin-card.entregue { border-color: #FFCDD2; background: #FFF5F5; }
+    .unit-admin-info h4 { font-family: var(--font-alt); font-size: 15px; font-weight: 800; color: #333; }
+    .unit-admin-info span { color: #777; font-size: 12px; }
+    .unit-admin-card select {
+      padding: 8px 10px; border: 2px solid #ddd; border-radius: 6px;
+      font-family: var(--font-alt); font-size: 12px; font-weight: 700;
+      background: white; cursor: pointer;
+    }
+
+    .btn-save {
+      display: block; width: 100%; max-width: 450px; margin: 24px auto 0;
+      padding: 16px; background: #4CAF50; color: white; border: none;
+      border-radius: 10px; font-size: 16px; font-weight: 800;
+      font-family: var(--font-alt); cursor: pointer; text-transform: uppercase;
+    }
+    .save-status { text-align: center; margin-top: 12px; font-weight: 700; font-size: 13px; }
+
+    .waitlist-table { width: 100%; border-collapse: collapse; }
+    .waitlist-table th {
+      background: var(--purple-main); color: white; padding: 10px 12px; text-align: left;
+      font-size: 12px; text-transform: uppercase; font-family: var(--font-alt);
+    }
+    .waitlist-table td { padding: 10px 12px; border-bottom: 1px solid #f0f0f0; font-size: 13px; }
+    .waitlist-empty { text-align: center; padding: 30px; color: #aaa; font-family: var(--font-alt); }
+
+    .form-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px;
+    }
+    .form-grid input, .form-grid select {
+      padding: 10px 12px; border: 2px solid #e8e8e8; border-radius: 8px; outline: none;
+      font-family: var(--font-main);
+    }
+    .btn-inline {
+      padding: 10px 14px; border: none; border-radius: 8px; cursor: pointer;
+      font-family: var(--font-alt); font-weight: 700; text-transform: uppercase; font-size: 12px;
+    }
+    .btn-primary { background: var(--purple-main); color: white; }
+    .btn-danger { background: #F44336; color: white; }
+
+    @media(max-width: 980px) {
+      .stats-grid { grid-template-columns: repeat(3, 1fr); }
+      .filters, .form-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media(max-width: 640px) {
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .filters, .form-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-box">
+      <h1>🔐 Painel MCMV</h1>
+      <p>Template local seguro (sem domínio externo)</p>
+      <input type="email" id="loginEmail" placeholder="E-mail" autocomplete="email" />
+      <input type="password" id="loginPassword" placeholder="Senha" autocomplete="current-password" />
+      <button onclick="doLogin()">Entrar</button>
+      <p class="login-error" id="loginError">E-mail ou senha inválidos.</p>
+    </div>
+  </div>
+
+  <div class="admin-panel" id="adminPanel">
+    <nav class="admin-nav">
+      <div class="container">
+        <h2>🏢 Admin — Plataforma MCMV</h2>
+        <div class="admin-nav-links">
+          <span class="chip">Modo local</span>
+          <button class="btn-logout" onclick="doLogout()">Sair</button>
+        </div>
+      </div>
+    </nav>
+
+    <div class="admin-content">
+      <div class="stats-grid" id="statsGrid"></div>
+
+      <div class="admin-tabs">
+        <div class="admin-tab active" onclick="switchTab('units', this)">📦 Unidades</div>
+        <div class="admin-tab" onclick="switchTab('waitlist', this)">📋 Cadastros</div>
+      </div>
+
+      <div id="tabUnits">
+        <div class="admin-card">
+          <h3>Gerenciar status de unidades</h3>
+
+          <div class="filters">
+            <input id="searchUnit" placeholder="Buscar unidade (ex: A-101)" oninput="renderUnitsGrid()" />
+            <select id="filterBlock" onchange="renderUnitsGrid()">
+              <option value="">Todos os blocos</option>
+              <option value="A">Bloco A</option>
+              <option value="B">Bloco B</option>
+            </select>
+            <select id="filterStatus" onchange="renderUnitsGrid()">
+              <option value="">Todos os status</option>
+              <option value="disponivel">Disponível</option>
+              <option value="reservado">Reservado</option>
+              <option value="documentacao">Documentação</option>
+              <option value="contratado">Contratado</option>
+              <option value="entregue">Entregue</option>
+            </select>
+            <select id="filterFaixa" onchange="renderUnitsGrid()">
+              <option value="">Todas as faixas</option>
+              <option value="Faixa 1">Faixa 1</option>
+              <option value="Faixa 2">Faixa 2</option>
+              <option value="Faixa 3">Faixa 3</option>
+            </select>
+          </div>
+
+          <div id="unitsGridContainer"></div>
+          <button class="btn-save" id="btnSave" onclick="saveChanges()">💾 Salvar alterações</button>
+          <p class="save-status" id="saveStatus"></p>
+        </div>
+      </div>
+
+      <div id="tabWaitlist" style="display:none;">
+        <div class="admin-card">
+          <h3>Lista de interessados MCMV</h3>
+
+          <div class="form-grid">
+            <input id="wlNome" placeholder="Nome" />
+            <input id="wlTelefone" placeholder="Telefone" />
+            <input id="wlRenda" type="number" placeholder="Renda familiar" />
+            <select id="wlFaixa">
+              <option value="Faixa 1">Faixa 1</option>
+              <option value="Faixa 2">Faixa 2</option>
+              <option value="Faixa 3">Faixa 3</option>
+            </select>
+          </div>
+          <button class="btn-inline btn-primary" onclick="addWaitlistItem()">Adicionar cadastro</button>
+          <button class="btn-inline btn-danger" onclick="clearWaitlist()" style="margin-left:8px;">Limpar lista</button>
+
+          <div id="waitlistContent" style="margin-top:16px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const ADMIN_CREDENTIALS = {
+      email: 'admin@mcmv.local',
+      password: 'altere-essa-senha'
+    };
+
+    const STORAGE_KEYS = {
+      token: 'mcmv_admin_token',
+      units: 'mcmv_units_overrides',
+      waitlist: 'mcmv_waitlist'
+    };
+
+    const BASE_UNITS = (() => {
+      const blocks = ['A', 'B'];
+      const types = [
+        { apt: 1, area: 42.5, tipo: '2Q' },
+        { apt: 2, area: 42.5, tipo: '2Q' },
+        { apt: 3, area: 46.8, tipo: '2Q + Varanda' },
+        { apt: 4, area: 46.8, tipo: '2Q + Varanda' }
+      ];
+      const rows = [];
+      blocks.forEach(block => {
+        for (let floor = 1; floor <= 5; floor++) {
+          types.forEach(t => {
+            const aptCode = `${floor}0${t.apt}`;
+            rows.push({
+              id: `${block}-${aptCode}`,
+              block,
+              floor,
+              area: t.area,
+              tipo: t.tipo,
+              faixa: floor <= 2 ? 'Faixa 1' : floor <= 4 ? 'Faixa 2' : 'Faixa 3',
+              status: 'disponivel'
+            });
+          });
+        }
+      });
+      return rows;
+    })();
+
+    let adminToken = '';
+    let currentUnits = [];
+
+    function doLogin() {
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      if (email === ADMIN_CREDENTIALS.email && password === ADMIN_CREDENTIALS.password) {
+        adminToken = 'local-token';
+        sessionStorage.setItem(STORAGE_KEYS.token, adminToken);
+        document.getElementById('loginOverlay').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'block';
+        loadData();
+      } else {
+        document.getElementById('loginError').style.display = 'block';
+      }
+    }
+
+    function doLogout() {
+      sessionStorage.removeItem(STORAGE_KEYS.token);
+      location.reload();
+    }
+
+    (function checkSession() {
+      const token = sessionStorage.getItem(STORAGE_KEYS.token);
+      if (token) {
+        adminToken = token;
+        document.getElementById('loginOverlay').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'block';
+        loadData();
+      }
+      document.getElementById('loginPassword').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') doLogin();
+      });
+    })();
+
+    function loadData() {
+      loadUnits();
+      loadWaitlist();
+    }
+
+    function loadUnits() {
+      currentUnits = BASE_UNITS.map(u => ({ ...u }));
+      const raw = localStorage.getItem(STORAGE_KEYS.units);
+      if (raw) {
+        try {
+          const overrides = JSON.parse(raw);
+          currentUnits.forEach(u => {
+            if (overrides[u.id]) u.status = overrides[u.id];
+          });
+        } catch (e) {
+          console.warn('Erro ao ler dados locais', e);
+        }
+      }
+      renderUnitsGrid();
+      renderStats();
+    }
+
+    function getFilteredUnits() {
+      const q = document.getElementById('searchUnit').value.trim().toLowerCase();
+      const block = document.getElementById('filterBlock').value;
+      const status = document.getElementById('filterStatus').value;
+      const faixa = document.getElementById('filterFaixa').value;
+
+      return currentUnits.filter(u => {
+        if (q && !u.id.toLowerCase().includes(q)) return false;
+        if (block && u.block !== block) return false;
+        if (status && u.status !== status) return false;
+        if (faixa && u.faixa !== faixa) return false;
+        return true;
+      });
+    }
+
+    function renderUnitsGrid() {
+      const container = document.getElementById('unitsGridContainer');
+      const grid = document.createElement('div');
+      grid.className = 'units-admin-grid';
+
+      const rows = getFilteredUnits();
+      if (!rows.length) {
+        container.innerHTML = '<div class="waitlist-empty">Nenhuma unidade encontrada com os filtros atuais.</div>';
+        return;
+      }
+
+      rows.forEach(unit => {
+        const card = document.createElement('div');
+        card.className = 'unit-admin-card ' + unit.status;
+        card.id = 'admin-unit-' + unit.id;
+        card.innerHTML = `
+          <div class="unit-admin-info">
+            <h4>${unit.id} · ${unit.tipo}</h4>
+            <span>${unit.area} m² · ${unit.floor}º andar · ${unit.faixa}</span>
+          </div>
+          <select onchange="updateUnitStatus('${unit.id}', this.value)">
+            <option value="disponivel" ${unit.status === 'disponivel' ? 'selected' : ''}>✅ Disponível</option>
+            <option value="reservado" ${unit.status === 'reservado' ? 'selected' : ''}>⏳ Reservado</option>
+            <option value="documentacao" ${unit.status === 'documentacao' ? 'selected' : ''}>📄 Documentação</option>
+            <option value="contratado" ${unit.status === 'contratado' ? 'selected' : ''}>🖊️ Contratado</option>
+            <option value="entregue" ${unit.status === 'entregue' ? 'selected' : ''}>🏁 Entregue</option>
+          </select>
+        `;
+        grid.appendChild(card);
+      });
+
+      container.innerHTML = '';
+      container.appendChild(grid);
+    }
+
+    function updateUnitStatus(unitId, newStatus) {
+      const unit = currentUnits.find(u => u.id === unitId);
+      if (!unit) return;
+      unit.status = newStatus;
+      const card = document.getElementById('admin-unit-' + unitId);
+      if (card) card.className = 'unit-admin-card ' + newStatus;
+      renderStats();
+    }
+
+    function renderStats() {
+      const count = status => currentUnits.filter(u => u.status === status).length;
+      const total = currentUnits.length;
+
+      document.getElementById('statsGrid').innerHTML = `
+        <div class="stat-card total"><div class="stat-number">${total}</div><div class="stat-label">Total</div></div>
+        <div class="stat-card disponivel"><div class="stat-number">${count('disponivel')}</div><div class="stat-label">Disponíveis</div></div>
+        <div class="stat-card reservado"><div class="stat-number">${count('reservado')}</div><div class="stat-label">Reservados</div></div>
+        <div class="stat-card documentacao"><div class="stat-number">${count('documentacao')}</div><div class="stat-label">Documentação</div></div>
+        <div class="stat-card contratado"><div class="stat-number">${count('contratado')}</div><div class="stat-label">Contratados</div></div>
+        <div class="stat-card entregue"><div class="stat-number">${count('entregue')}</div><div class="stat-label">Entregues</div></div>
+      `;
+    }
+
+    function saveChanges() {
+      const btn = document.getElementById('btnSave');
+      const status = document.getElementById('saveStatus');
+      btn.disabled = true;
+      btn.textContent = '⏳ Salvando...';
+
+      const overrides = {};
+      currentUnits.forEach(u => { overrides[u.id] = u.status; });
+      localStorage.setItem(STORAGE_KEYS.units, JSON.stringify(overrides));
+
+      status.style.color = '#4CAF50';
+      status.textContent = 'Alterações salvas localmente com sucesso.';
+      btn.textContent = '✅ Salvo';
+
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.textContent = '💾 Salvar alterações';
+      }, 1500);
+    }
+
+    function switchTab(tab, el) {
+      document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+      document.getElementById('tabUnits').style.display = tab === 'units' ? 'block' : 'none';
+      document.getElementById('tabWaitlist').style.display = tab === 'waitlist' ? 'block' : 'none';
+      if (tab === 'waitlist') loadWaitlist();
+    }
+
+    function loadWaitlist() {
+      const container = document.getElementById('waitlistContent');
+      let data = [];
+      const raw = localStorage.getItem(STORAGE_KEYS.waitlist);
+      if (raw) {
+        try {
+          data = JSON.parse(raw) || [];
+        } catch {
+          data = [];
+        }
+      }
+
+      if (!data.length) {
+        container.innerHTML = '<div class="waitlist-empty">Nenhum cadastro registrado até o momento.</div>';
+        return;
+      }
+
+      let html = `
+        <table class="waitlist-table">
+          <thead>
+            <tr><th>#</th><th>Nome</th><th>Telefone</th><th>Renda</th><th>Faixa</th><th>Data</th></tr>
+          </thead>
+          <tbody>
+      `;
+
+      data.forEach((item, idx) => {
+        const date = new Date(item.data);
+        const dateStr = date.toLocaleDateString('pt-BR') + ' ' + date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        html += `
+          <tr>
+            <td>${idx + 1}</td>
+            <td><strong>${item.nome}</strong></td>
+            <td>${item.telefone}</td>
+            <td>R$ ${Number(item.renda || 0).toLocaleString('pt-BR')}</td>
+            <td>${item.faixa}</td>
+            <td>${dateStr}</td>
+          </tr>
+        `;
+      });
+
+      html += '</tbody></table>';
+      container.innerHTML = html;
+    }
+
+    function addWaitlistItem() {
+      const nome = document.getElementById('wlNome').value.trim();
+      const telefone = document.getElementById('wlTelefone').value.trim();
+      const renda = document.getElementById('wlRenda').value;
+      const faixa = document.getElementById('wlFaixa').value;
+
+      if (!nome || !telefone) {
+        alert('Preencha nome e telefone.');
+        return;
+      }
+
+      let data = [];
+      const raw = localStorage.getItem(STORAGE_KEYS.waitlist);
+      if (raw) {
+        try { data = JSON.parse(raw) || []; } catch { data = []; }
+      }
+
+      data.unshift({ nome, telefone, renda, faixa, data: new Date().toISOString() });
+      localStorage.setItem(STORAGE_KEYS.waitlist, JSON.stringify(data));
+
+      document.getElementById('wlNome').value = '';
+      document.getElementById('wlTelefone').value = '';
+      document.getElementById('wlRenda').value = '';
+
+      loadWaitlist();
+    }
+
+    function clearWaitlist() {
+      if (!confirm('Tem certeza que deseja limpar toda a lista?')) return;
+      localStorage.removeItem(STORAGE_KEYS.waitlist);
+      loadWaitlist();
+    }
+  </script>
+</body>
+</html>
