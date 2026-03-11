@@ -3195,31 +3195,66 @@
       document.getElementById('kanbanModalSubtitle').textContent = subtitle;
 
       // Informações detalhadas
-      let infoHtml = `
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:12px;">
-          <div><strong>Telefone:</strong> ${lead.telefone || '-'}</div>
-          <div><strong>Renda:</strong> ${formatMoney(lead.renda || 0)}</div>
-          <div><strong>Imóvel:</strong> ${formatMoney(lead.valorImovel || 0)}</div>
-          <div><strong>Faixa:</strong> ${lead.faixa || '-'}</div>
-          <div><strong>Área:</strong> ${lead.area || '-'}</div>
-          <div><strong>Status:</strong> <span style="background:#34b26f; color:white; padding:2px 6px; border-radius:3px;text-transform:uppercase;font-weight:700;font-size:10px;">${lead.status}</span></div>
-          <div><strong>Elegível:</strong> ${lead.elegivel ? 'Sim' : 'Não'}</div>
-          <div><strong>Subsídio:</strong> ${formatMoney(lead.subsidioEstimado || 0)}</div>
-        </div>
-        <div style="margin-top:10px;">
-          <button class="kanban-btn-primary" onclick="toggleModalEditMode('info')" style="width:100%;">Editar Informações</button>
-        </div>
-      `;
-      document.getElementById('kanbanModalInfo').innerHTML = infoHtml;
+      const infoDiv = document.getElementById('kanbanModalInfo');
+      if (isModalEditMode.info) {
+        // Modo edição
+        let infoHtml = `
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:12px;">
+            <div><strong>Nome:</strong> <input type="text" id="editNome" value="${lead.nome || ''}" style="width:100%; padding:4px; border:1px solid #ddd; border-radius:4px;"></div>
+            <div><strong>Telefone:</strong> <input type="text" id="editTelefone" value="${lead.telefone || ''}" style="width:100%; padding:4px; border:1px solid #ddd; border-radius:4px;"></div>
+            <div><strong>Renda:</strong> <input type="number" id="editRenda" value="${lead.renda || ''}" style="width:100%; padding:4px; border:1px solid #ddd; border-radius:4px;"></div>
+            <div><strong>Imóvel:</strong> <input type="number" id="editValorImovel" value="${lead.valorImovel || ''}" style="width:100%; padding:4px; border:1px solid #ddd; border-radius:4px;"></div>
+            <div><strong>Faixa:</strong> <input type="text" id="editFaixa" value="${lead.faixa || ''}" style="width:100%; padding:4px; border:1px solid #ddd; border-radius:4px;"></div>
+            <div><strong>Área:</strong> <input type="text" id="editArea" value="${lead.area || ''}" style="width:100%; padding:4px; border:1px solid #ddd; border-radius:4px;"></div>
+          </div>
+          <div style="margin-top:10px; display:flex; gap:8px;">
+            <button class="kanban-btn-primary" onclick="saveAndDeactivateEditMode('info')" style="flex:1;">Salvar</button>
+            <button class="kanban-btn-secondary" onclick="toggleModalEditMode('info')" style="flex:1;">Cancelar</button>
+          </div>
+        `;
+        infoDiv.innerHTML = infoHtml;
+      } else {
+        // Modo visualização
+        let infoHtml = `
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:12px;">
+            <div><strong>Telefone:</strong> ${lead.telefone || '-'}</div>
+            <div><strong>Renda:</strong> ${formatMoney(lead.renda || 0)}</div>
+            <div><strong>Imóvel:</strong> ${formatMoney(lead.valorImovel || 0)}</div>
+            <div><strong>Faixa:</strong> ${lead.faixa || '-'}</div>
+            <div><strong>Área:</strong> ${lead.area || '-'}</div>
+            <div><strong>Status:</strong> <span style="background:#34b26f; color:white; padding:2px 6px; border-radius:3px;text-transform:uppercase;font-weight:700;font-size:10px;">${lead.status}</span></div>
+            <div><strong>Elegível:</strong> ${lead.elegivel ? 'Sim' : 'Não'}</div>
+            <div><strong>Subsídio:</strong> ${formatMoney(lead.subsidioEstimado || 0)}</div>
+          </div>
+          <div style="margin-top:10px;">
+            <button class="kanban-btn-primary" onclick="toggleModalEditMode('info')" style="width:100%;">Editar Informações</button>
+          </div>
+        `;
+        infoDiv.innerHTML = infoHtml;
+      }
 
       // Descrição
       const desc = lead.description || '(Sem descrição)';
       const descSection = document.getElementById('kanbanDescriptionSection');
-      let descHtml = `
-        <div id="kanbanModalDescription" style="font-size:12px; line-height:1.6; color:#2b3140; margin-bottom:10px;">${desc}</div>
-        <button class="kanban-btn-primary" onclick="toggleModalEditMode('description')" style="width:100%;">Editar Descrição</button>
-      `;
-      descSection.innerHTML = descHtml;
+      
+      if (isModalEditMode.description) {
+        // Modo edição
+        let descHtml = `
+          <textarea id="editDescription" style="width:100%; min-height:80px; padding:8px; border:1px solid #ddd; border-radius:4px; font-family:var(--font-main); font-size:12px;">${lead.description || ''}</textarea>
+          <div style="margin-top:10px; display:flex; gap:8px;">
+            <button class="kanban-btn-primary" onclick="saveAndDeactivateEditMode('description')" style="flex:1;">Salvar</button>
+            <button class="kanban-btn-secondary" onclick="toggleModalEditMode('description')" style="flex:1;">Cancelar</button>
+          </div>
+        `;
+        descSection.innerHTML = descHtml;
+      } else {
+        // Modo visualização
+        let descHtml = `
+          <div id="kanbanModalDescription" style="font-size:12px; line-height:1.6; color:#2b3140; margin-bottom:10px;">${desc}</div>
+          <button class="kanban-btn-primary" onclick="toggleModalEditMode('description')" style="width:100%;">Editar Descrição</button>
+        `;
+        descSection.innerHTML = descHtml;
+      }
 
       // Anexos
       if (lead.attachments && lead.attachments.length > 0) {
@@ -3356,6 +3391,12 @@
     function closeKanbanModal() {
       document.getElementById('kanbanModalOverlay').classList.remove('active');
       currentEditingLeadId = null;
+      // Reset dos modos de edição
+      isModalEditMode = {
+        info: false,
+        description: false,
+        dates: false
+      };
     }
 
     function moveLeadToNextFromModal() {
