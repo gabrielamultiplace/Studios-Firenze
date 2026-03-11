@@ -1136,7 +1136,6 @@
                 <div class="kanban-modal-section" id="kanbanDescriptionSection">
                   <div class="kanban-modal-section-title">Descrição</div>
                   <div class="kanban-modal-section-content">
-                    <div class="kanban-description-field" id="kanbanModalDescription"></div>
                   </div>
                 </div>
 
@@ -3221,17 +3220,8 @@
       // Descrição
       const desc = lead.description || '(Sem descrição)';
       const descSection = document.getElementById('kanbanDescriptionSection');
-      const descDisplay = document.getElementById('kanbanModalDescription');
-      descDisplay.textContent = desc;
-      if (lead.description) {
-        descDisplay.classList.remove('empty');
-      } else {
-        descDisplay.classList.add('empty');
-      }
-      
-      // Adiciona botão de editar após a descrição
       let descHtml = `
-        <p id="kanbanModalDescription" style="font-size:12px; line-height:1.6; color:#2b3140; margin-bottom:10px;">${desc}</p>
+        <div id="kanbanModalDescription" style="font-size:12px; line-height:1.6; color:#2b3140; margin-bottom:10px;">${desc}</div>
         <button class="kanban-btn-primary" onclick="toggleModalEditMode('description')" style="width:100%;">Editar Descrição</button>
       `;
       descSection.innerHTML = descHtml;
