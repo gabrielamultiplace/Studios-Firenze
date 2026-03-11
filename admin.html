@@ -3089,61 +3089,11 @@
     };
 
     function toggleModalEditMode(field) {
+      console.log('toggleModalEditMode chamado para:', field, 'currentEditingLeadId:', currentEditingLeadId);
       isModalEditMode[field] = !isModalEditMode[field];
-      // Re-renderiza o modal para atualizar visualização/edição
+      console.log('isModalEditMode[' + field + '] agora é:', isModalEditMode[field]);
       if (currentEditingLeadId) {
         openKanbanModal(currentEditingLeadId);
-      }
-    }
-
-    function activateEditMode(field) {
-      const leads = getKanbanLeads();
-      const lead = leads.find(l => l.id === currentEditingLeadId);
-      if (!lead) return;
-
-      if (field === 'info') {
-        const infoDiv = document.getElementById('kanbanModalInfo');
-        infoDiv.innerHTML = `
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:12px;">
-            <div><strong>Telefone:</strong> <input type="text" id="editTelefone" value="${lead.telefone || ''}" style="width:100%; padding:4px; border:1px solid #ddd; border-radius:4px;"></div>
-            <div><strong>Renda:</strong> <input type="number" id="editRenda" value="${lead.renda || ''}" style="width:100%; padding:4px; border:1px solid #ddd; border-radius:4px;"></div>
-            <div><strong>Imóvel:</strong> <input type="number" id="editValorImovel" value="${lead.valorImovel || ''}" style="width:100%; padding:4px; border:1px solid #ddd; border-radius:4px;"></div>
-            <div><strong>Faixa:</strong> <input type="text" id="editFaixa" value="${lead.faixa || ''}" style="width:100%; padding:4px; border:1px solid #ddd; border-radius:4px;"></div>
-            <div><strong>Área:</strong> <input type="text" id="editArea" value="${lead.area || ''}" style="width:100%; padding:4px; border:1px solid #ddd; border-radius:4px;"></div>
-            <div><strong>Nome:</strong> <input type="text" id="editNome" value="${lead.nome || ''}" style="width:100%; padding:4px; border:1px solid #ddd; border-radius:4px;"></div>
-          </div>
-          <div style="margin-top:10px; display:flex; gap:8px;">
-            <button class="kanban-btn-primary" onclick="saveAndDeactivateEditMode('info')" style="flex:1;">Salvar</button>
-            <button class="kanban-btn-secondary" onclick="toggleModalEditMode('info')" style="flex:1;">Cancelar</button>
-          </div>
-        `;
-      } else if (field === 'description') {
-        const descDiv = document.getElementById('kanbanModalDescription');
-        descDiv.innerHTML = `
-          <textarea id="editDescription" style="width:100%; min-height:80px; padding:8px; border:1px solid #ddd; border-radius:4px; font-family:var(--font-main); font-size:12px;">${lead.description || ''}</textarea>
-          <div style="margin-top:10px; display:flex; gap:8px;">
-            <button class="kanban-btn-primary" onclick="saveAndDeactivateEditMode('description')" style="flex:1;">Salvar</button>
-            <button class="kanban-btn-secondary" onclick="toggleModalEditMode('description')" style="flex:1;">Cancelar</button>
-          </div>
-        `;
-      } else if (field === 'dates') {
-        const datesDiv = document.getElementById('kanbanModalDates');
-        let datesEditHtml = '';
-        Object.entries(lead.importantDates || {}).forEach(([name, date]) => {
-          datesEditHtml += `
-            <div style="margin-bottom:12px;">
-              <label style="font-size:12px; font-weight:600; color:#666; display:block; margin-bottom:4px;">${name}</label>
-              <input type="date" data-date-field="${name}" value="${date}" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px; font-size:12px;">
-            </div>
-          `;
-        });
-        datesEditHtml += `
-          <div style="margin-top:10px; display:flex; gap:8px;">
-            <button class="kanban-btn-primary" onclick="saveAndDeactivateEditMode('dates')" style="flex:1;">Salvar</button>
-            <button class="kanban-btn-secondary" onclick="toggleModalEditMode('dates')" style="flex:1;">Cancelar</button>
-          </div>
-        `;
-        datesDiv.innerHTML = datesEditHtml;
       }
     }
 
@@ -3182,9 +3132,15 @@
     }
 
     function openKanbanModal(leadId) {
+      console.log('openKanbanModal chamado para leadId:', leadId);
       const leads = getKanbanLeads();
       const lead = leads.find(l => l.id === leadId);
-      if (!lead) return;
+      if (!lead) {
+        console.error('Lead não encontrado com ID:', leadId);
+        return;
+      }
+      console.log('Lead encontrado:', lead.nome);
+      console.log('isModalEditMode.info:', isModalEditMode.info, 'isModalEditMode.description:', isModalEditMode.description, 'isModalEditMode.dates:', isModalEditMode.dates);
 
       currentEditingLeadId = leadId;
       const overlay = document.getElementById('kanbanModalOverlay');
@@ -3196,7 +3152,12 @@
 
       // Informações detalhadas
       const infoDiv = document.getElementById('kanbanModalInfo');
+      if (!infoDiv) {
+        console.error('Element kanbanModalInfo não encontrado');
+        return;
+      }
       if (isModalEditMode.info) {
+        console.log('Renderizando EDIÇÃO para Informações');
         // Modo edição
         let infoHtml = `
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:12px;">
@@ -3214,6 +3175,7 @@
         `;
         infoDiv.innerHTML = infoHtml;
       } else {
+        console.log('Renderizando VISUALIZAÇÃO para Informações');
         // Modo visualização
         let infoHtml = `
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:12px;">
