@@ -2850,11 +2850,7 @@
             { name: 'Comprovante_renda.pdf', date: '2026-03-11' }
           ],
           tags: ['URGENTE', 'DOCUMENTAÇÃO_PENDENTE', 'FGTS_SIM'],
-          importantDates: {
-            'Data de Análise': new Date(now.getTime() + 7*24*60*60*1000).toISOString().split('T')[0],
-            'Prazo Documentação': new Date(now.getTime() + 14*24*60*60*1000).toISOString().split('T')[0],
-            'Vencimento Proposta': new Date(now.getTime() + 21*24*60*60*1000).toISOString().split('T')[0]
-          },
+          importantDates: {},
           checklist: [
             { name: 'RG original', done: true },
             { name: 'CPF', done: true },
@@ -2868,6 +2864,9 @@
             { action: 'Classificado como FAIXA 2', user: 'Sistema', timestamp: new Date(now.getTime() - 3600000).toISOString() }
           ]
         };
+        
+        // Gera datas automaticamente
+        testLead.importantDates = generateImportantDates(testLead);
         
         kanbanLeads = [testLead];
         saveKanbanLeads(kanbanLeads);
@@ -3277,12 +3276,7 @@
       // Datas
       // Auto-preenche datas importantes se vazias
       if (!lead.importantDates || Object.keys(lead.importantDates).length === 0) {
-        const now = new Date();
-        lead.importantDates = {
-          'Data de Análise': new Date(now.getTime() + 7*24*60*60*1000).toISOString().split('T')[0],
-          'Prazo Documentação': new Date(now.getTime() + 14*24*60*60*1000).toISOString().split('T')[0],
-          'Vencimento Proposta': new Date(now.getTime() + 21*24*60*60*1000).toISOString().split('T')[0]
-        };
+        lead.importantDates = generateImportantDates(lead);
         const leads = getKanbanLeads();
         const leadIndex = leads.findIndex(l => l.id === currentEditingLeadId);
         if (leadIndex >= 0) {
