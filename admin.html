@@ -3089,9 +3089,7 @@
     };
 
     function toggleModalEditMode(field) {
-      console.log('toggleModalEditMode chamado para:', field, 'currentEditingLeadId:', currentEditingLeadId);
       isModalEditMode[field] = !isModalEditMode[field];
-      console.log('isModalEditMode[' + field + '] agora é:', isModalEditMode[field]);
       if (currentEditingLeadId) {
         openKanbanModal(currentEditingLeadId);
       }
@@ -3131,8 +3129,30 @@
       openKanbanModal(currentEditingLeadId);
     }
 
+    function renderDatesSection(lead) {
+      const datesDiv = document.getElementById('kanbanModalDates');
+      if (!datesDiv) return;
+      
+      if (isModalEditMode.dates) {
+        // MODO EDIÇÃO
+        let html = '';
+        Object.entries(lead.importantDates || {}).forEach(([name, date]) => {
+          html += `<div style="margin-bottom:12px;"><label style="font-size:12px; font-weight:600; color:#666; display:block; margin-bottom:4px;">${name}</label><input type="date" data-date-field="${name}" value="${date}" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px;"></div>`;
+        });
+        html += `<div style="margin-top:10px; display:flex; gap:8px;"><button class="kanban-btn-primary" onclick="saveAndDeactivateEditMode('dates')" style="flex:1;">Salvar</button><button class="kanban-btn-secondary" onclick="toggleModalEditMode('dates')" style="flex:1;">Cancelar</button></div>`;
+        datesDiv.innerHTML = html;
+      } else {
+        // MODO VISUALIZAÇÃO
+        let html = '';
+        Object.entries(lead.importantDates || {}).forEach(([name, date]) => {
+          html += `<div style="font-size:12px; margin-bottom:8px;"><strong>${name}:</strong> ${new Date(date).toLocaleDateString('pt-BR')}</div>`;
+        });
+        html += `<div style="margin-top:10px;"><button class="kanban-btn-primary" onclick="toggleModalEditMode('dates'); return false;" style="width:100%; padding:10px;">Editar Datas</button></div>`;
+        datesDiv.innerHTML = html;
+      }
+    }
+
     function openKanbanModal(leadId) {
-      console.log('openKanbanModal chamado para leadId:', leadId);
       const leads = getKanbanLeads();
       const lead = leads.find(l => l.id === leadId);
       if (!lead) {
@@ -3175,7 +3195,6 @@
         `;
         infoDiv.innerHTML = infoHtml;
       } else {
-        console.log('Renderizando VISUALIZAÇÃO para Informações');
         // Modo visualização
         let infoHtml = `
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:12px;">
@@ -3256,8 +3275,7 @@
         document.getElementById('kanbanTagsSection').style.display = 'none';
       }
 
-      // Datas
-      // Auto-preenche datas importantes se vazias
+      // Datas - SIMPLESMENTE RENDERIZAR
       if (!lead.importantDates || Object.keys(lead.importantDates).length === 0) {
         lead.importantDates = generateImportantDates(lead);
         const leads = getKanbanLeads();
@@ -3268,44 +3286,9 @@
         }
       }
       
-      // Renderiza seção de datas
       if (lead.importantDates && Object.keys(lead.importantDates).length > 0) {
         document.getElementById('kanbanDatesSection').style.display = 'block';
-        const datesDiv = document.getElementById('kanbanModalDates');
-        
-        console.log('Renderizando datas. isModalEditMode.dates =', isModalEditMode.dates);
-        
-        if (isModalEditMode.dates) {
-          console.log('Modo EDIÇÃO de datas');
-          let editHtml = '';
-          Object.entries(lead.importantDates).forEach(([name, date]) => {
-            editHtml += `
-              <div style="margin-bottom:12px;">
-                <label style="font-size:12px; font-weight:600; color:#666; display:block; margin-bottom:4px;">${name}</label>
-                <input type="date" data-date-field="${name}" value="${date}" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px; font-size:12px;">
-              </div>
-            `;
-          });
-          editHtml += `
-            <div style="margin-top:10px; display:flex; gap:8px;">
-              <button class="kanban-btn-primary" onclick="saveAndDeactivateEditMode('dates')" style="flex:1;">Salvar</button>
-              <button class="kanban-btn-secondary" onclick="toggleModalEditMode('dates')" style="flex:1;">Cancelar</button>
-            </div>
-          `;
-          datesDiv.innerHTML = editHtml;
-        } else {
-          console.log('Modo VISUALIZAÇÃO de datas');
-          let viewHtml = '';
-          Object.entries(lead.importantDates).forEach(([name, date]) => {
-            viewHtml += `<div style="font-size:12px; margin-bottom:8px;"><strong>${name}:</strong> ${new Date(date).toLocaleDateString('pt-BR')}</div>`;
-          });
-          viewHtml += `<div style="margin-top:10px;">
-            <button class="kanban-btn-primary" onclick="toggleModalEditMode('dates')" style="width:100%; padding:10px; border:none; margin-top:8px;">Editar Datas</button>
-          </div>`;
-          console.log('HTML a renderizar:', viewHtml);
-          datesDiv.innerHTML = viewHtml;
-          console.log('Datas renderizadas. innerHTML agora é:', datesDiv.innerHTML);
-        }
+        renderDatesSection(lead);
       } else {
         document.getElementById('kanbanDatesSection').style.display = 'none';
       }
